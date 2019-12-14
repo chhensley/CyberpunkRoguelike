@@ -1,0 +1,9 @@
+{
+  "config": "config.json",
+  "colors": ["data/colors.json"],
+  "tiles": ["data/tiles.json"],
+  "handlers": [
+    "worker/handlers/ui_handler.js",
+    "worker/handlers/actor_handler.js"
+  ]
+}

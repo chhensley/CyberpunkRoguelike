@@ -1,0 +1,15 @@
+{
+  "terminal": {
+    "width": 60,
+    "height": 60,
+    "fontSize": 12,
+    "fontStyle": "bold",
+    "font": "sans-serif",
+    "bg": "black",
+    "forceSquareRatio": true
+  },
+  "map": {
+    "width": 200,
+    "height": 200
+  }
+}

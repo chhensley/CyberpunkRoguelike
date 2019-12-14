@@ -1,0 +1,12 @@
+{
+  "player": {
+    "char": "@",
+    "color": "term01",
+    "blockMove": true
+  },
+  "wall": {
+    "char": "\u2588",
+    "color": "term00",
+    "blockMove": true
+  }
+}
