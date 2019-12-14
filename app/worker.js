@@ -4,11 +4,13 @@
  * Love is the License, love under will.
  */
 
-importScripts('/app/shared/rot.min.js', '/app/shared/util.js', '/app/worker/entity.js', '/app/worker/msgmanager.js')
+var site = 'https://chhensley.github.io/cyberpunk'
+
+importScripts(site + '/app/shared/rot.min.js', site + '/app/shared/util.js', site + '/app/worker/entity.js', site + '/app/worker/msgmanager.js')
 
 //Load game configuration
-var manifest = getJson('manifest.json')
-var config = getJson(manifest.config)
+var manifest = getJson(site + 'manifest.json')
+var config = getJson(site + manifest.config)
 var gameData = {
   colors: {},
   tiles: {}
@@ -16,13 +18,13 @@ var gameData = {
 
 //Load colors
 for(const url of manifest.colors) {
-  gameData.colors = {...gameData.colors, ...getJson(url)}
+  gameData.colors = {...gameData.colors, ...getJson(site + url)}
 }
 
 //Load game tiles
 for(const url of manifest.tiles)
  {
-  var tiles = getJson(url)
+  var tiles = getJson(site + url)
   for(const key in tiles) {
     const tile = tiles[key]
     gameData.tiles[key] = new Tile(tile.char, tile.color, tile.blockMove)
@@ -34,7 +36,10 @@ var entityManager = new EntityManager()
 var msgManager = new MsgManager()
 
 //Load message handlers
-importScripts(...manifest.handlers)
+for(const handler of manifest.handlers) {
+  importScripts(site + handler)
+}
+//importScripts(...manifest.handlers)
 
 //Place player on map
 var player = entityManager.createEntity()

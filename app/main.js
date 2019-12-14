@@ -4,11 +4,13 @@
  * Love is the License, love under will.
  */
 
-var worker = new Worker('app/worker.js')
+var site = 'https://chhensley.github.io/cyberpunk/'
+
+var worker = new Worker(site + 'app/worker.js')
 
 //Retrieve configuration info
-var manifest = getJson('app/manifest.json')
-var config = getJson('app/' + manifest.config)
+var manifest = getJson(site + 'app/manifest.json')
+var config = getJson(site + 'app/' + manifest.config)
 
 //Intialize simulated terminal
 var term = new ROT.Display
