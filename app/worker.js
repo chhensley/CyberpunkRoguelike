@@ -4,7 +4,7 @@
  * Love is the License, love under will.
  */
 
-var site = 'https://chhensley.github.io/cyberpunk'
+var site = 'https://chhensley.github.io/CyberpunkRogueLike'
 
 importScripts(site + '/app/shared/rot.min.js', site + '/app/shared/util.js', site + '/app/worker/entity.js', site + '/app/worker/msgmanager.js')
 

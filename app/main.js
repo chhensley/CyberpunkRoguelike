@@ -4,7 +4,7 @@
  * Love is the License, love under will.
  */
 
-var site = 'https://chhensley.github.io/cyberpunk/'
+var site = 'https://chhensley.github.io/CyberpunkRoguelike/'
 
 var worker = new Worker(site + 'app/worker.js')
 
