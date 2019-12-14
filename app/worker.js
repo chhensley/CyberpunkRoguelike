@@ -4,12 +4,12 @@
  * Love is the License, love under will.
  */
 
-var site = 'https://chhensley.github.io/CyberpunkRoguelike/'
+var site = 'https://chhensley.github.io/CyberpunkRoguelike/app/'
 
-importScripts(site + 'app/shared/rot.min.js', site + 'app/shared/util.js', site + 'app/worker/entity.js', site + 'app/worker/msgmanager.js')
+importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/entity.js', site + 'worker/msgmanager.js')
 
 //Load game configuration
-var manifest = getJson(site + 'app/manifest.json')
+var manifest = getJson(site + 'manifest.json')
 var config = getJson(site + manifest.config)
 var gameData = {
   colors: {},
