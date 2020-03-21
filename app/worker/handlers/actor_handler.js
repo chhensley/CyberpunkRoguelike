@@ -1,16 +1,8 @@
 /**
- * Copyright 2019
+ * Copyright 2019 - 2020
  * Do as thou wilt shall be the whole of the License.
  * Love is the License, love under will.
  */
-
-// Move actor message
-var MsgMove = function(entity, dx, dy) {
-  this.id = 'actor_move'
-  this.entity = entity
-  this.dx = dx
-  this.dy = dy
-}
 
 msgManager.addHandler(
   function(msg, msgManager) {

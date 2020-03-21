@@ -10,6 +10,13 @@
   },
   "map": {
     "width": 200,
-    "height": 200
+    "height": 200,
+    "binaryPartition": {
+      "depth": 5,
+      "minDoors": 3,
+      "maxDoors": 5,
+      "minHeight": 30,
+      "minWidth": 30
+    }
   }
 }

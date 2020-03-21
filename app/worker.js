@@ -1,10 +1,12 @@
 /**
- * Copyright 2019
+ * Copyright 2019 - 2020
  * Do as thou wilt shall be the whole of the License.
  * Love is the License, love under will.
  */
 
+//To run locally set site to empty string
 var site = 'https://chhensley.github.io/CyberpunkRoguelike/app/'
+//var site = ''
 
 importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/entity.js', site + 'worker/msgmanager.js')
 
@@ -39,33 +41,12 @@ var msgManager = new MsgManager()
 for(const handler of manifest.handlers) {
   importScripts(site + handler)
 }
-//importScripts(...manifest.handlers)
 
 //Place player on map
 var player = entityManager.createEntity()
-player.tile = gameData.tiles['player']
-player.position = new Position(config.map.width/2, config.map.height/2)
 
-//Generate some random terrain to navigates
-for(var i = 0; i < 1000; i++) {
-  const x = Math.floor(config.map.width * ROT.RNG.getUniform())
-  const y = Math.floor(config.map.height * ROT.RNG.getUniform())
-
-  const view = entityManager.getView('position')
-  var legal = true;
-  for(const entity of view) {
-    if(entity.position.x == x && entity.position == y) {
-      legal = false
-      break
-    }
-  }
-
-  if(legal) {
-    var wall = entityManager.createEntity()
-    wall.tile = gameData.tiles['wall']
-    wall.position = new Position(x, y)
-  }
-}
+//Send RNG seed to main thread for display
+this.postMessage({id: 'set_value', body: {'property': 'seed', 'value': ROT.RNG.getSeed()}})
 
 //Run game setup
 msgManager.msgAppStart()

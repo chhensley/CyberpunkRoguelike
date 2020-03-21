@@ -3,6 +3,7 @@
   "colors": ["data/colors.json"],
   "tiles": ["data/tiles.json"],
   "handlers": [
+    "worker/handlers/factory_handler.js",
     "worker/handlers/ui_handler.js",
     "worker/handlers/actor_handler.js"
   ]

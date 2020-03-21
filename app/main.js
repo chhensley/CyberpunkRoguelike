@@ -4,7 +4,9 @@
  * Love is the License, love under will.
  */
 
+//To run locally set site to empty string
 var site = 'https://chhensley.github.io/CyberpunkRoguelike/'
+//var site = ''
 
 var worker = new Worker(site + 'app/worker.js')
 
@@ -24,10 +26,16 @@ document.body.onload = function() {
 }
 
 worker.onmessage = function(e) {
-  if (e.data.id == 'term_refresh') {
-    refreshTerm(e.data.body)
-  } else if (e.data.id = 'input_unlock') {
-    inputLock = false
+  switch(e.data.id) {
+    case 'term_refresh':
+      refreshTerm(e.data.body)
+      break
+    case 'input_unlock':
+      inputLock = false
+      break
+    case 'set_value':
+      document.getElementById(e.data.body.property).innerHTML = e.data.body.value
+      break
   }
 }
 
@@ -46,6 +54,11 @@ function refreshTerm(map) {
   }
 }
 
+/**
+ * Processes key input, or simulated keyinput from a button control
+ * @param {String} key
+ *    Keyboard input
+ */
 function keyInput(key) {
   if(!inputLock) {
     inputLock = true;
