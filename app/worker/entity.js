@@ -1,5 +1,5 @@
 /**
- * Copyright 2019
+ * Copyright 2019 - 2020
  * Do as thou wilt shall be the whole of the License.
  * Love is the License, love under will.
  */
@@ -46,13 +46,18 @@ class EntityManager {
 }
 
 //Component definitions
+var Actor = function(fov) {
+  this.fov = fov
+}
+
 var Position = function(x, y) {
   this.x  = x
   this.y = y
 }
 
-var Tile = function(char, color, blockMove) {
+var Tile = function(char, color, blockMove, blockLOS) {
   this.char = char
   this.color = gameData.colors[color]
   this.blockMove = blockMove
+  this.blockLOS = blockLOS
 }

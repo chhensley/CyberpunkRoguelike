@@ -155,6 +155,7 @@ function generateCityBlock(tree) {
     {x: tree.children[0].min.x, y: tree.children[0].max.y}, 
     {x: tree.children[1].max.x, y: tree.children[1].min.y}
   )
+  player.actor = new Actor(25)
 }
 
 msgManager.addHandler(

@@ -1,4 +1,12 @@
 {
+  "_null_": { 
+    "char": "",
+    "color": ""
+  },
+  "empty": {
+    "char": "\u00B7",
+    "color": "term00_dim"
+  },
   "player": {
     "char": "@",
     "color": "term01",
@@ -7,6 +15,7 @@
   "wall": {
     "char": "\u25A0",
     "color": "term00",
-    "blockMove": true
+    "blockMove": true,
+    "blockLOS": true
   }
 }

@@ -4,6 +4,32 @@
  * Love is the License, love under will.
  */
 
+var fovMap = []
+
+function fovCallback(x, y) {
+  return fovMap[x][y]
+}
+
+function generateFOVMap() {
+  var fovMap = []
+
+  //Generate empty FOV map
+  for(var x = 0; x < config.map.width; x++) {
+    fovMap.push([])
+    for(var y = 0; y < config.map.height; y++) {
+      fovMap[x].push(true)
+    }
+  }
+
+  //Mark tiles which block LOS
+  var view = entityManager.getView('position', 'tile')
+  for(const entity of view) {
+    fovMap[entity.position.x][entity.position.y] = !entity.tile.blockLOS && fovMap[entity.position.x][entity.position.y]
+  }
+
+  return fovMap
+}
+
 msgManager.addHandler(
   function(msg, msgManager) {
     switch(msg.id) {
@@ -24,6 +50,9 @@ msgManager.addHandler(
         }
         msg.entity.position = position
         break;
+      case 'app_start':
+        fovMap = generateFOVMap()
+        break
     }
   }
 )

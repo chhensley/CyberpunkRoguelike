@@ -29,7 +29,7 @@ for(const url of manifest.tiles)
   var tiles = getJson(site + url)
   for(const key in tiles) {
     const tile = tiles[key]
-    gameData.tiles[key] = new Tile(tile.char, tile.color, tile.blockMove)
+    gameData.tiles[key] = new Tile(tile.char, tile.color, tile.blockMove, tile.blockLOS)
   }
 }
 

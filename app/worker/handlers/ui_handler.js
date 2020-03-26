@@ -1,5 +1,5 @@
 /**
- * Copyright 2019
+ * Copyright 2019 - 2020
  * Do as thou wilt shall be the whole of the License.
  * Love is the License, love under will.
  */
@@ -39,21 +39,11 @@
  * @param {array} view 
  */
 function buildMap(view) {
-  var map = []
-  
-  //Create empty map
-  for(var x = 0; x < config.map.width; x++) {
-    var row = []
-    for(var y = 0; y < config.map.height; y++) {
-      row.push({char: '', color: ''})
-    }
-    map.push(row)
-  }
 
   var minX = player.position.x - config.terminal.width/2
-  var maxX = player.position.x + config.terminal.width/2
+  var maxX = player.position.x + config.terminal.width/2 - 1
   var minY = player.position.y - config.terminal.height/2
-  var maxY = player.position.y + config.terminal.width/2
+  var maxY = player.position.y + config.terminal.width/2 - 1
 
   //Adjust view port to be within map boundaries
   if (minX < 0) {
@@ -71,16 +61,34 @@ function buildMap(view) {
     maxY = config.map.height - 1;
     minY = config.map.height - config.terminal.height;
   }
-  
 
-  //Fill map
+  var map = [] //Game map within the terminal window
+  var visibleMap = [] //Map visibile to player
+
+
+  //Create empty map
+  for(var x = 0; x < config.terminal.width; x++) {
+    map.push([])
+    visibleMap.push([])
+    for(var y = 0; y < config.terminal.height; y++) {
+      map[x].push(gameData.tiles['empty'])
+      visibleMap[x].push(gameData.tiles['_null_'])
+    }
+  }
+  
+  //Add entities to map
   for (var entity of view) {
     var position = entity.position
     if(position.x > maxX || position.x < minX || position.y > maxY || position.y < minY)
       continue;
-    //position.x - minX, position.y - minY
     map[entity.position.x - minX][entity.position.y - minY] = entity.tile
   }
 
-  return map
+  //Mask off non-visible parts of map
+  var fov = new ROT.FOV.RecursiveShadowcasting(fovCallback)
+  fov.compute(player.position.x, player.position.y, player.actor.fov, function(x, y, r, visibility) {
+    visibleMap[x - minX][y - minY] = map[x - minX][y - minY]
+  })
+
+  return visibleMap
 }

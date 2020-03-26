@@ -1,6 +1,7 @@
 {
   "background00": "#000000",
   "term00": "#41FF00",
+  "term00_dim": "#207F00",
   "term01": "#FFBF00",
   "term02": "#F8F8FF"
 }
