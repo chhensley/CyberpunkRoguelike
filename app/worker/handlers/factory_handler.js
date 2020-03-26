@@ -99,7 +99,7 @@ function createDoors(node, map) {
       var x = randInt(0,1)?node.max.x:node.min.x
       var y = randInt(node.min.y + 1, node.max.y - 1)
       if(!x) x = node.max.x
-      if(x == config.map.width - 1) y = node.min.x
+      if(x == config.map.width - 1) x = node.min.x
     }
     map[x][y] = null
   } 
@@ -139,8 +139,15 @@ function generateCityBlock(tree) {
         var entity = entityManager.createEntity()
         entity.tile = map[x][y]
         entity.position = new Position(x, y)
-        if(entity.tile == gameData.tiles['player']) {
-          player = entity
+        switch(entity.tile) {
+          //Entity is the player
+          case gameData.tiles['player']:
+            player = entity
+            break
+          //Entity is a blank wall
+          case gameData.tiles['wall']:
+            entity.hiddenTile = gameData.tiles['wallHidden']
+            break
         }
       }
     }

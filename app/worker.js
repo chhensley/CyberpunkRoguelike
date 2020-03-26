@@ -4,9 +4,11 @@
  * Love is the License, love under will.
  */
 
-//To run locally set site to empty string
-var site = 'https://chhensley.github.io/CyberpunkRoguelike/app/'
-//var site = ''
+/**
+ * This dynamically grabs the full parent path for building relative URLs
+ * This is required to properly handle loading pages within github's CMS
+ */
+var site = location.href.substring(0, location.href.lastIndexOf('/') + 1)
 
 importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/entity.js', site + 'worker/msgmanager.js')
 
@@ -29,7 +31,7 @@ for(const url of manifest.tiles)
   var tiles = getJson(site + url)
   for(const key in tiles) {
     const tile = tiles[key]
-    gameData.tiles[key] = new Tile(tile.char, tile.color, tile.blockMove, tile.blockLOS)
+    gameData.tiles[key] = new Tile(tile.char, tile.color, tile.alpha?tile.alpha:1, tile.blockMove, tile.blockLOS)
   }
 }
 

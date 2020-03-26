@@ -4,6 +4,14 @@
  * Love is the License, love under will.
  */
 
+//X and Y offsets for translating the game map to the terminal view port
+const offset = {
+  minX: Math.floor(config.terminal.width/2),
+  maxX: Math.ceil(config.terminal.width/2),
+  minY: Math.floor(config.terminal.height/2),
+  maxY: Math.ceil(config.terminal.height/2)
+}
+
  msgManager.addHandler(
    function(msg, msgManager) {
      switch(msg.id) {
@@ -39,26 +47,25 @@
  * @param {array} view 
  */
 function buildMap(view) {
-
-  var minX = player.position.x - config.terminal.width/2
-  var maxX = player.position.x + config.terminal.width/2 - 1
-  var minY = player.position.y - config.terminal.height/2
-  var maxY = player.position.y + config.terminal.width/2 - 1
+  var minX = player.position.x - offset.minX
+  var maxX = player.position.x + offset.maxX
+  var minY = player.position.y - offset.minY
+  var maxY = player.position.y + offset.maxY
 
   //Adjust view port to be within map boundaries
   if (minX < 0) {
     minX = 0;
     maxX = config.terminal.width - 1;
   } else if (maxX >= config.map.width) {
-    maxX = config.map.width - 1;
+    maxX = config.map.width;
     minX = config.map.width - config.terminal.width;
   }
 
   if (minY < 0) {
     minY = 0;
-    maxY = config.terminal.height - 1;
+    maxY = config.terminal.height;
   } else if (maxY >= config.map.height) {
-    maxY = config.map.height - 1;
+    maxY = config.map.height;
     minY = config.map.height - config.terminal.height;
   }
 
@@ -72,23 +79,30 @@ function buildMap(view) {
     visibleMap.push([])
     for(var y = 0; y < config.terminal.height; y++) {
       map[x].push(gameData.tiles['empty'])
-      visibleMap[x].push(gameData.tiles['_null_'])
+      visibleMap[x].push(gameData.tiles['emptyHidden'])
     }
   }
   
   //Add entities to map
   for (var entity of view) {
     var position = entity.position
-    if(position.x > maxX || position.x < minX || position.y > maxY || position.y < minY)
-      continue;
+    if(position.x >= maxX || position.x < minX || position.y >= maxY || position.y < minY)
+      continue
+
     map[entity.position.x - minX][entity.position.y - minY] = entity.tile
+    if(entity.hiddenTile)
+      visibleMap[entity.position.x - minX][entity.position.y - minY] = entity.hiddenTile
   }
 
   //Mask off non-visible parts of map
   var fov = new ROT.FOV.RecursiveShadowcasting(fovCallback)
   fov.compute(player.position.x, player.position.y, player.actor.fov, function(x, y, r, visibility) {
+    if (x < 0 || x >= config.map.width || y < 0 || y >= config.map.height)
+      return
+
     visibleMap[x - minX][y - minY] = map[x - minX][y - minY]
   })
 
   return visibleMap
+  //return map
 }

@@ -55,9 +55,9 @@ var Position = function(x, y) {
   this.y = y
 }
 
-var Tile = function(char, color, blockMove, blockLOS) {
+var Tile = function(char, color, alpha, blockMove, blockLOS) {
   this.char = char
-  this.color = gameData.colors[color]
+  this.color = gameData.colors[color] + Math.floor(alpha * 255).toString(16).toUpperCase()
   this.blockMove = blockMove
   this.blockLOS = blockLOS
 }

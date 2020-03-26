@@ -7,7 +7,7 @@
 var fovMap = []
 
 function fovCallback(x, y) {
-  return fovMap[x][y]
+    return x >= 0 && x < config.map.width && y >=0 && y < config.map.height ? fovMap[x][y] : false
 }
 
 function generateFOVMap() {

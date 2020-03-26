@@ -1,11 +1,13 @@
 {
-  "_null_": { 
-    "char": "",
-    "color": ""
-  },
   "empty": {
     "char": "\u00B7",
-    "color": "term00_dim"
+    "color": "term00",
+    "alpha": 0.5
+  },
+  "emptyHidden": {
+    "char": "\u00B7",
+    "color": "term00",
+    "alpha": 0.25
   },
   "player": {
     "char": "@",
@@ -17,5 +19,10 @@
     "color": "term00",
     "blockMove": true,
     "blockLOS": true
+  },
+  "wallHidden": {
+    "char": "\u25A0",
+    "color": "term00",
+    "alpha": 0.25
   }
 }
