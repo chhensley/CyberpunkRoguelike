@@ -5,8 +5,11 @@
  */
 
 //To run locally set site to empty string
-var site = 'https://chhensley.github.io/CyberpunkRoguelike/'
-//var site = ''
+/**
+ * This dynamically grabs the full parent path for building relative URLs
+ * This is required to properly handle loading pages within github's CMS
+ */
+var site = location.href.substring(0, location.href.lastIndexOf('/') + 1)
 
 var worker = new Worker(site + 'app/worker.js')
 
