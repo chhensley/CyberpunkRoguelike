@@ -4,6 +4,38 @@
  * Love is the License, love under will.
  */
 
+
+/**
+ * Returns the center point of a square
+ * @param {Object} min - upper left corner
+ * @param {Object} mad - lower right corner
+ */
+function center(min, max) {
+  var center = {}
+  center.x = Math.floor(min.x + (max.x - min.x)/2)
+  center.y = Math.floor(min.y + (max.y - min.y)/2)
+
+  return center
+}
+
+/**
+ * Returns a random integer within a range
+ * @param {number} min - minimum value
+ * @param {number} max - maximum value
+ */
+function randInt(min, max) {
+  const range = max - min + 1
+  return Math.floor(range * ROT.RNG.getUniform()) + min
+}
+
+/**
+ * Returns random member of an array
+ * @param {array} array
+ */
+function randMember(array) {
+  return array[Math.floor(array.length * ROT.RNG.getUniform())]
+}
+
 /**
  * This dynamically grabs the full parent path for building relative URLs
  * This is required to properly handle loading pages within github's CMS
@@ -17,7 +49,9 @@ var manifest = getJson(site + 'manifest.json')
 var config = getJson(site + manifest.config)
 var gameData = {
   colors: {},
-  tiles: {}
+  tiles: {},
+  objects: {
+  }
 }
 
 //Load colors
@@ -35,6 +69,11 @@ for(const url of manifest.tiles)
   }
 }
 
+//Load game objects
+for(const url of manifest.objects) {
+  gameData.objects = {...gameData.objects, ...getJson(site + url)}
+}
+
 //Intialize game state
 var entityManager = new EntityManager()
 var msgManager = new MsgManager()
@@ -45,7 +84,7 @@ for(const handler of manifest.handlers) {
 }
 
 //Place player on map
-var player = entityManager.createEntity()
+var player
 
 //Send RNG seed to main thread for display
 this.postMessage({id: 'set_value', body: {'property': 'seed', 'value': ROT.RNG.getSeed()}})

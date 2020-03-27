@@ -71,13 +71,13 @@ function generateBSPTree(depth) {
  */
 function drawNode(map, node) {
   for(var x = node.min.x; x <= node.max.x; x++) {
-    map[x][node.min.y] = gameData.tiles['wall']
-    map[x][node.max.y] = gameData.tiles['wall']
+    map[x][node.min.y] = 'wall'
+    map[x][node.max.y] = 'wall'
   }
 
   for(var y = node.min.y; y <= node.max.y; y++) {
-    map[node.min.x][y] = gameData.tiles['wall']
-    map[node.max.x][y] = gameData.tiles['wall']
+    map[node.min.x][y] = 'wall'
+    map[node.max.x][y] = 'wall'
   }
 }
 
@@ -136,25 +136,15 @@ function generateCityBlock(tree) {
     map.push([])
     for(var y = 0; y < config.map.height; y++) {
       if(map[x][y]) {
-        var entity = entityManager.createEntity()
-        entity.tile = map[x][y]
+        const entity = entityManager.createEntity(map[x][y])
         entity.position = new Position(x, y)
-        switch(entity.tile) {
-          //Entity is the player
-          case gameData.tiles['player']:
-            player = entity
-            break
-          //Entity is a blank wall
-          case gameData.tiles['wall']:
-            entity.hiddenTile = gameData.tiles['wallHidden']
-            break
-        }
       }
     }
   }
 
   //Place player in the middle of the largest street
-  player.tile = gameData.tiles['player']
+  player = entityManager.createEntity('player')
+  
   player.position = tree.isVertical?center(
     {x: tree.children[0].max.x, y: tree.children[0].min.y}, 
     {x: tree.children[1].min.x, y: tree.children[1].max.y}
@@ -162,7 +152,6 @@ function generateCityBlock(tree) {
     {x: tree.children[0].min.x, y: tree.children[0].max.y}, 
     {x: tree.children[1].max.x, y: tree.children[1].min.y}
   )
-  player.actor = new Actor(25)
 }
 
 msgManager.addHandler(

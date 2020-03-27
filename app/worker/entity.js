@@ -4,6 +4,8 @@
  * Love is the License, love under will.
  */
 
+var first = true
+
 // Centeralizes management of all game entities
 class EntityManager {
   //Do not modify this directly
@@ -11,10 +13,33 @@ class EntityManager {
 
   /**
    * Creates a new entity
+   * @param {string} baseObj - ID of game object definition, null for an empty entity
    * @return {object} - New game entity
    */
-  createEntity() {
+  createEntity(baseObj) {
     var entity = {}
+    
+    if(baseObj) {
+      const baseEntity = gameData.objects[baseObj]
+      for(const component in baseEntity) {
+        if(first) console.log(component)
+        switch(component) {
+          case 'actor':
+            entity.actor = {}
+            entity.actor.fov = baseEntity.actor.fov
+            break
+          case 'tile':
+            entity.tile = gameData.tiles[baseEntity.tile]
+            break
+          case 'hiddenTile':
+            entity.hiddenTile =  gameData.tiles[baseEntity.hiddenTile]
+            break
+        }
+      }
+      if(first) console.log(entity)
+      first = false
+    }
+
     this._entities.push(entity)
     return entity
   }

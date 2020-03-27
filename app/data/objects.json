@@ -1,0 +1,12 @@
+{
+  "player": {
+    "actor": {
+      "fov": 25
+    },
+    "tile": "player"
+  },
+  "wall": {
+    "tile": "wall",
+    "hiddenTile": "wallHidden"
+  }
+}
