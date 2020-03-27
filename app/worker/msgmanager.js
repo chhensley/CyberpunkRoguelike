@@ -86,4 +86,13 @@ class MsgManager {
   msgKeyInput(key) {
     this._msgStack.push({id: 'key_input', key: key})
   }
+
+  /**
+   * Post a message to the player facing message log
+   * @param {String} logMsg 
+   *    Message to post
+   */
+  msgLogMessage(logMsg) {
+    this._msgStack.push({id: 'log_message', logMsg: logMsg})
+  }
 }

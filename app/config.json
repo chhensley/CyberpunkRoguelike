@@ -1,4 +1,7 @@
 {
+  "messageLog": {
+    "history": 10
+  },
   "terminal": {
     "width": 61,
     "height": 61,

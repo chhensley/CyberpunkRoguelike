@@ -12,34 +12,36 @@ const offset = {
   maxY: Math.ceil(config.terminal.height/2)
 }
 
- msgManager.addHandler(
-   function(msg, msgManager) {
-     switch(msg.id) {
-      case 'turn_end':
-      case 'app_start':
-      case 'term_refresh':
-        const view = entityManager.getView('position', 'tile')
-        msgManager.pushUIMsg({id: 'term_refresh', body: buildMap(view)})
-        break
-      case 'key_input':
-        switch(msg.key) {
-          case 'w':
-            msgManager.msgActorMove(player, 0, -1)
-            break
-          case 's':
-            msgManager.msgActorMove(player, 0, 1)
-            break
-          case 'a':
-            msgManager.msgActorMove(player, -1, 0)
-            break;
-          case 'd':
-            msgManager.msgActorMove(player, 1, 0)
-            break;
-        }
-        break;
-     }
-   }
- )
+msgManager.addHandler(
+  function(msg, msgManager) {
+    switch(msg.id) {
+    case 'app_start':
+    case 'turn_end':
+    case 'term_refresh':
+      const view = entityManager.getView('position', 'tile')
+      msgManager.pushUIMsg({id: 'term_refresh', body: buildMap(view)})
+      break
+    case 'key_input':
+      switch(msg.key) {
+        case 'w':
+          msgManager.msgActorMove(player, 0, -1)
+          break
+        case 's':
+          msgManager.msgActorMove(player, 0, 1)
+          break
+        case 'a':
+          msgManager.msgActorMove(player, -1, 0)
+          break
+        case 'd':
+          msgManager.msgActorMove(player, 1, 0)
+          break
+      }
+      break
+    case 'log_message':
+      msgManager.pushUIMsg({id: 'log_msg', body: msg.logMsg})
+      break
+  }
+})
 
  /**
  * Builds the map to be displayed to the player from an entity view

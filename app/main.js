@@ -24,6 +24,13 @@ term.setOptions(config.terminal);
 //Initialize input
 var inputLock = false
 
+//Initialize message log
+for(let i = 0; i < config.messageLog.history; i++) {
+  const entry = document.createElement('div')
+  entry.innerHTML = '&nbsp'
+  document.getElementById('msglog').appendChild(entry)
+}
+
 document.body.onload = function() {
   document.getElementById('term').appendChild(term.getContainer())
 }
@@ -38,6 +45,13 @@ worker.onmessage = function(e) {
       break
     case 'set_value':
       document.getElementById(e.data.body.property).innerHTML = e.data.body.value
+      break
+    case 'log_msg':
+      const msgLog = document.getElementById('msglog')
+      const msg = document.createElement('div')
+      msg.innerHTML = e.data.body
+      msgLog.removeChild(msgLog.childNodes[0])
+      msgLog.appendChild(msg)
       break
   }
 }
