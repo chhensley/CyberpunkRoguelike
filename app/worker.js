@@ -22,6 +22,7 @@ function center(min, max) {
  * Returns a random integer within a range
  * @param {number} min - minimum value
  * @param {number} max - maximum value
+ * @return {number} - random number
  */
 function randInt(min, max) {
   const range = max - min + 1
@@ -31,6 +32,7 @@ function randInt(min, max) {
 /**
  * Returns random member of an array
  * @param {array} array
+ * @return {} - random member
  */
 function randMember(array) {
   return array[Math.floor(array.length * ROT.RNG.getUniform())]

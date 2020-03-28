@@ -21,3 +21,12 @@ function getJson(url)
     else
       return null
 }
+
+/**
+ * Returns string value with the first character upper cased
+ * @param {string} string
+ * @return string with first character uppder cased
+ */
+function setUpper(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}

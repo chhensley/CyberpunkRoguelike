@@ -152,6 +152,9 @@ function generateCityBlock(tree) {
     {x: tree.children[0].min.x, y: tree.children[0].max.y}, 
     {x: tree.children[1].max.x, y: tree.children[1].min.y}
   )
+
+  var ganger = entityManager.createEntity('ganger')
+  ganger.position = tree.isVertical?new Position(player.position.x, player.position.y + 5):new Position(player.position.x + 5, player.position.y)
 }
 
 msgManager.addHandler(

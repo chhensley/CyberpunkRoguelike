@@ -6,10 +6,20 @@
 
 var fovMap = []
 
+/**
+ * Callback for field of view calculations
+ * @param {number} min - minimum value
+ * @param {number} max - maximum value
+ * @return {number} - random number
+ */
 function fovCallback(x, y) {
     return x >= 0 && x < config.map.width && y >=0 && y < config.map.height ? fovMap[x][y] : false
 }
 
+/**
+ * Maps all objects which block field of view
+ * @return {boolean[][]} - map marking all tiles which block LOS
+ */
 function generateFOVMap() {
   var fovMap = []
 
@@ -30,9 +40,23 @@ function generateFOVMap() {
   return fovMap
 }
 
+entityManager.addListener('onPersonDestroy', function(entity) {
+  delete entity.actor
+  delete entity.hiddenTile
+  entity.tile = gameData.tiles['splat']
+  delete entity.destructable
+  msgManager.msgLogMessage(setUpper(entity.id + ' dies'))
+})
+
 msgManager.addHandler(
   function(msg, msgManager) {
     switch(msg.id) {
+      case 'actor_damage':
+        msg.trgt.destructable.dmg += randInt(1, 3)
+        if(msg.trgt.destructable.dmg >= msg.trgt.destructable.hp) msg.trgt.destructable.onDestroy(msg.trgt)
+        var logMsg = msg.src.id + ' punches ' + msg.trgt.id
+        msgManager.msgLogMessage(setUpper(logMsg))
+        break
       case 'actor_move':
         //Check that move is in bounds
         var position = new Position(msg.entity.position.x + msg.dx, msg.entity.position.y + msg.dy)
@@ -45,11 +69,12 @@ msgManager.addHandler(
         var view = entityManager.getView('position', 'tile')
         for(const entity of view) {
           if(position.x == entity.position.x && position.y == entity.position.y && entity.tile.blockMove) {
+            if(entity.destructable) msgManager.msgActorDamage(msg.entity, entity)
             return
           }
         }
         msg.entity.position = position
-        break;
+        break
       case 'app_start':
         fovMap = generateFOVMap()
         break

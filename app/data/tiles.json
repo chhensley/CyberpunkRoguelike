@@ -9,10 +9,19 @@
     "color": "term00",
     "alpha": 0.25
   },
+  "ganger": {
+    "char": "\u2663",
+    "color": "term01",
+    "blockMove": true
+  },
   "player": {
     "char": "@",
     "color": "term01",
     "blockMove": true
+  },
+  "splat": {
+    "char": "\u273C",
+    "color": "term00"
   },
   "wall": {
     "char": "\u25A0",

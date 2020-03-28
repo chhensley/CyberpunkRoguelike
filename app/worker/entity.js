@@ -4,12 +4,20 @@
  * Love is the License, love under will.
  */
 
-var first = true
 
 // Centeralizes management of all game entities
 class EntityManager {
   //Do not modify this directly
   _entities = []
+  _listeners = {}
+
+  addListener(id, listener) {
+    this._listeners[id] = listener
+  }
+
+  listener(id) {
+    return this._listeners[id]
+  }
 
   /**
    * Creates a new entity
@@ -22,11 +30,15 @@ class EntityManager {
     if(baseObj) {
       const baseEntity = gameData.objects[baseObj]
       for(const component in baseEntity) {
-        if(first) console.log(component)
         switch(component) {
           case 'actor':
-            entity.actor = {}
-            entity.actor.fov = baseEntity.actor.fov
+            entity.actor = new Actor(baseEntity.actor.fov)
+            break
+          case 'destructable':
+            entity.destructable = new Destructable(baseEntity.destructable.hp, this._listeners[baseEntity.destructable.onDestroy])
+            break
+          case 'id':
+            entity.id = baseEntity.id
             break
           case 'tile':
             entity.tile = gameData.tiles[baseEntity.tile]
@@ -36,8 +48,6 @@ class EntityManager {
             break
         }
       }
-      if(first) console.log(entity)
-      first = false
     }
 
     this._entities.push(entity)
@@ -70,9 +80,18 @@ class EntityManager {
   }
 }
 
+//Default listener
+function onDefault(entity) {}
+
 //Component definitions
 var Actor = function(fov) {
   this.fov = fov
+}
+
+var Destructable = function(hp, onDestroy) {
+  this.hp = hp
+  this.dmg = 0
+  this.onDestroy = onDestroy ? onDestroy : onDefault
 }
 
 var Position = function(x, y) {

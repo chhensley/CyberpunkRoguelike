@@ -90,8 +90,8 @@ function buildMap(view) {
     var position = entity.position
     if(position.x >= maxX || position.x < minX || position.y >= maxY || position.y < minY)
       continue
-
-    map[entity.position.x - minX][entity.position.y - minY] = entity.tile
+    if(map[entity.position.x - minX][entity.position.y - minY] == gameData.tiles['empty'] || entity.blockMove)
+      map[entity.position.x - minX][entity.position.y - minY] = entity.tile
     if(entity.hiddenTile)
       visibleMap[entity.position.x - minX][entity.position.y - minY] = entity.hiddenTile
   }

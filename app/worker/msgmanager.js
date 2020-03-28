@@ -65,6 +65,10 @@ class MsgManager {
     this._msgStack.push({id: 'turn_end'})
   }
 
+  msgActorDamage(src, trgt) {
+    this._msgStack.push({id: 'actor_damage', src: src, trgt: trgt})
+  }
+
   /**
    * Move actor message
    * @param {Entity} entity 
