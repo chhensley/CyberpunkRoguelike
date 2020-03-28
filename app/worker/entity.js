@@ -7,17 +7,42 @@
 
 // Centeralizes management of all game entities
 class EntityManager {
-  //Do not modify this directly
+  //Do not modify these directly
   _entities = []
   _listeners = {}
 
+  /**
+   * Registers single event listeners
+   * @param {string} id - key for event listener in _listeners dictionary
+   * @param {function} listener - event listener
+   */
   addListener(id, listener) {
     this._listeners[id] = listener
   }
 
+  /**
+   * Registers multiple event listeners
+   * The key in _listeners dictionary will be the function name
+   * @param {function, function, ...} - One or more functions to register
+   */
+  addListeners() {
+    console.log(arguments[0])
+    for(var i = 0; i < arguments.length; i++) {
+      this._listeners[arguments[i].name] = arguments[i]
+    }
+  }
+
+  /**
+   * Returns a registered listener
+   * @param {string} id - key for event listener in _listeners dictionary
+   * @return {function} listener - event listener
+   */
   listener(id) {
     return this._listeners[id]
   }
+
+  //onDestroy event handler
+  onDestroy = function() {}
 
   /**
    * Creates a new entity
@@ -35,7 +60,8 @@ class EntityManager {
             entity.actor = new Actor(baseEntity.actor.fov)
             break
           case 'destructable':
-            entity.destructable = new Destructable(baseEntity.destructable.hp, this._listeners[baseEntity.destructable.onDestroy])
+            entity.destructable = new Destructable(baseEntity.destructable.hp)
+            entity.onDestroy = this._listeners[baseEntity.destructable.onDestroy]
             break
           case 'id':
             entity.id = baseEntity.id
@@ -88,10 +114,9 @@ var Actor = function(fov) {
   this.fov = fov
 }
 
-var Destructable = function(hp, onDestroy) {
+var Destructable = function(hp) {
   this.hp = hp
   this.dmg = 0
-  this.onDestroy = onDestroy ? onDestroy : onDefault
 }
 
 var Position = function(x, y) {

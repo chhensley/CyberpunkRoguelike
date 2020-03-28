@@ -40,20 +40,24 @@ function generateFOVMap() {
   return fovMap
 }
 
-entityManager.addListener('onPersonDestroy', function(entity) {
-  delete entity.actor
-  delete entity.hiddenTile
-  entity.tile = gameData.tiles['splat']
-  delete entity.destructable
-  msgManager.msgLogMessage(setUpper(entity.id + ' dies'))
-})
+//Register event listeners
+function onPersonDestroy() {
+  delete this.actor
+  delete this.hiddenTile
+  this.tile = gameData.tiles['splat']
+  delete this.destructable
+  msgManager.msgLogMessage(setUpper(this.id + ' dies'))
+}
 
+entityManager.addListeners(onPersonDestroy)
+
+//Register actor message handler
 msgManager.addHandler(
   function(msg, msgManager) {
     switch(msg.id) {
       case 'actor_damage':
         msg.trgt.destructable.dmg += randInt(1, 3)
-        if(msg.trgt.destructable.dmg >= msg.trgt.destructable.hp) msg.trgt.destructable.onDestroy(msg.trgt)
+        if(msg.trgt.destructable.dmg >= msg.trgt.destructable.hp) msg.trgt.onDestroy()
         var logMsg = msg.src.id + ' punches ' + msg.trgt.id
         msgManager.msgLogMessage(setUpper(logMsg))
         break
