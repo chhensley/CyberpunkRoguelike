@@ -105,12 +105,23 @@ class StateMachineManager {
   _states = {}
   _machines = {}
 
+  /**
+   * Registers multiple state functions
+   * The key in _states dictionary will be the function name
+   * Each function should take the owning relevant entity as a parameter
+   * @param {function, function, ...} - One or more functions to register
+   */
   registerStates() {
     for(var i = 0; i < arguments.length; i++) {
       this._states[arguments[i].name] = arguments[i]
     }
   }
 
+  /**
+   * Registers a new state machine
+   * @param {string} id - Id for state machine, becomes key in _machines dictionary
+   * @param {object} fsmDef - Object defining state. Each key is a state, each value is the _states function for that state
+   */
   registerMachine(id, fsmDef) {
     for(const state in fsmDef) {
       console.log(fsmDef[state])
@@ -118,6 +129,11 @@ class StateMachineManager {
     }
   }
 
+  /**
+   * Returns a previously registered state machine
+   * @param {String} id - Id of state machine
+   * @return {Object} - State machine
+   */
   getMachine(id) {
     return machines[id]
   }

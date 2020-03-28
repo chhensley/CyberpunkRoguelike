@@ -88,7 +88,6 @@ msgManager.addHandler(
         break
       case 'app_start':
         fovMap = generateFOVMap()
-        console.log(entityManager.fsmManager)
         break
     }
   }
