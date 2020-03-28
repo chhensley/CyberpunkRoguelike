@@ -70,41 +70,38 @@ function buildMap(view) {
     maxY = config.map.height;
     minY = config.map.height - config.terminal.height;
   }
-
-  var map = [] //Game map within the terminal window
   var visibleMap = [] //Map visibile to player
 
 
   //Create empty map
   for(var x = 0; x < config.terminal.width; x++) {
-    map.push([])
     visibleMap.push([])
     for(var y = 0; y < config.terminal.height; y++) {
-      map[x].push(gameData.tiles['empty'])
       visibleMap[x].push(gameData.tiles['emptyHidden'])
     }
   }
   
   //Add entities to map
-  for (var entity of view) {
-    var position = entity.position
-    if(position.x >= maxX || position.x < minX || position.y >= maxY || position.y < minY)
-      continue
-    if(map[entity.position.x - minX][entity.position.y - minY] == gameData.tiles['empty'] || entity.blockMove)
-      map[entity.position.x - minX][entity.position.y - minY] = entity.tile
-    if(entity.hiddenTile)
-      visibleMap[entity.position.x - minX][entity.position.y - minY] = entity.hiddenTile
-  }
+  for(let x = minX; x < maxX; x++)
+    for(let y = minY; y < maxY; y++) {
+      for(const entity of entityManager.atPosition(x, y)) {
+        if(entity.hiddenTile) visibleMap[x - minX][y - minY] = entity.hiddenTile
+      }
+    }
 
   //Mask off non-visible parts of map
-  var fov = new ROT.FOV.RecursiveShadowcasting(fovCallback)
   fov.compute(player.position.x, player.position.y, player.actor.fov, function(x, y, r, visibility) {
     if (x < 0 || x >= config.map.width || y < 0 || y >= config.map.height)
       return
 
-    visibleMap[x - minX][y - minY] = map[x - minX][y - minY]
+    visibleMap[x - minX][y - minY] = gameData.tiles['empty']
+    for(const entity of entityManager.atPosition(x, y)) {
+      
+      if(!visibleMap[x - minX][y - minY].blockMove) {
+        visibleMap[x - minX][y - minY] = entity.tile
+      }
+    }
   })
 
   return visibleMap
-  //return map
 }

@@ -52,12 +52,40 @@ function randMember(array) {
 }
 
 /**
+ * Callback for field of view calculations
+ * @param {number} x - x coordinate
+ * @param {number} y - y coordinate
+ * @return {boolean} - true if los can pass through coordinates
+ */
+function fovCallback(x, y) {
+  for(const entity of entityManager.atPosition(x, y)) {
+    if(entity.tile.blockLOS) return false
+  }
+  return true
+}
+
+/**
+ * Callback for pathing calculations
+ * @param {number} x - x coordinate
+ * @param {number} y - y coordinate
+ * @return {boolean} - true if entity can move through coordinates
+ */
+function pathCallback(x,y) {
+  for(const entity of entityManager.atPosition(x, y)) {
+    if(entity.tile.blockMove) return false
+  }
+  return true
+}
+
+/**
  * This dynamically grabs the full parent path for building relative URLs
  * This is required to properly handle loading pages within github's CMS
  */
 var site = location.href.substring(0, location.href.lastIndexOf('/') + 1)
 
 importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/entity.js', site + 'worker/msgmanager.js')
+
+var fov = new ROT.FOV.RecursiveShadowcasting(fovCallback)
 
 //Load game file configuration
 var manifest = getJson(site + 'manifest.json')

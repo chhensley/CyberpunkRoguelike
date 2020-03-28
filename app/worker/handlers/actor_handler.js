@@ -4,44 +4,7 @@
  * Love is the License, love under will.
  */
 
-var fovMap = []
-
-/**
- * Callback for field of view calculations
- * @param {number} min - minimum value
- * @param {number} max - maximum value
- * @return {number} - random number
- */
-function fovCallback(x, y) {
-    return x >= 0 && x < config.map.width && y >=0 && y < config.map.height ? fovMap[x][y] : false
-}
-
-/**
- * Maps all objects which block field of view
- * @return {boolean[][]} - map marking all tiles which block LOS
- */
-function generateFOVMap() {
-  var fovMap = []
-
-  //Generate empty FOV map
-  for(var x = 0; x < config.map.width; x++) {
-    fovMap.push([])
-    for(var y = 0; y < config.map.height; y++) {
-      fovMap[x].push(true)
-    }
-  }
-
-  //Mark tiles which block LOS
-  var view = entityManager.getView('position', 'tile')
-  for(const entity of view) {
-    fovMap[entity.position.x][entity.position.y] = !entity.tile.blockLOS && fovMap[entity.position.x][entity.position.y]
-  }
-
-  return fovMap
-}
-
 //Register state listeners
-
 function stateAttack(entity){}
 function stateWait(entity){}
 
@@ -91,7 +54,8 @@ msgManager.addHandler(
         actor.statemachine[actor.state](msg.entity)
         break
       case 'app_start':
-        fovMap = generateFOVMap()
+      case 'turn_end':
+        entityManager.regenerateGameMap(config.map.width, config.map.height)
         break
       case 'turn_npc':
         var view = entityManager.getView('actor','position')

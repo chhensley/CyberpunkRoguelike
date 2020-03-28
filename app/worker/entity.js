@@ -10,6 +10,11 @@ class EntityManager {
   //Do not modify these directly
   _entities = []
   _listeners = {}
+  _gameMap = {
+    width: 0,
+    height: 0,
+    tiles: []
+  }
 
   fsmManager = new StateMachineManager()
 
@@ -98,6 +103,38 @@ class EntityManager {
     }
     
     return view
+  }
+
+
+  /**
+   * Returns array of entities at the given coordinates
+   * @param {*} x - x coordinate
+   * @param {*} y - y coordinate
+   */
+  atPosition(x, y) {
+    return x < 0 || x >= this._gameMap.width || y < 0 || y >= this._gameMap.height ? [] : this._gameMap.tiles[x][y]
+  }
+
+  /**
+   * Regenerates two dimensional array of entities
+   * @param {number} width - width of game map
+   * @param {number} height - height of game map
+   */
+  regenerateGameMap(width, height) {
+    this._gameMap.width = width
+    this._gameMap.height = height
+    this._gameMap.tiles = []
+    for(let x = 0; x < width; x++) {
+      this._gameMap.tiles.push([])
+      for(let y = 0; y < height; y++) {
+        this._gameMap.tiles[x].push([])
+      }
+    }
+
+    let view = entityManager.getView('position', 'tile') 
+    for (const entity of view) {
+      this._gameMap.tiles[entity.position.x][entity.position.y].push(entity)
+    }
   }
 }
 
