@@ -61,8 +61,20 @@ class MsgManager {
     this._msgStack.push({id: 'turn_start'})
   }
 
+  msgTurnNPC() {
+    this._msgStack.push({id: 'turn_npc'})
+  }
+
   msgTurnEnd() {
     this._msgStack.push({id: 'turn_end'})
+  }
+
+  /**
+   * Process the AI for an entity
+   * @param {Object} entity
+   */
+  msgAIProcess(entity) {
+    this._msgStack.push({id: 'ai_process', entity: entity})
   }
 
   msgActorDamage(src, trgt) {

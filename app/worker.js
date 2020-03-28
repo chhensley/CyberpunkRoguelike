@@ -117,6 +117,7 @@ for(var msg of msgManager._uiMsgQueue) {
 onmessage = function(e) {
   if(e.data.id == 'keypress') {
     msgManager.msgTurnEnd()
+    msgManager.msgTurnNPC()
     msgManager.msgKeyInput(e.data.body)
     msgManager.msgTurnStart()
 

@@ -49,7 +49,10 @@ class EntityManager {
       for(const component in baseEntity) {
         switch(component) {
           case 'actor':
-            entity.actor = new Actor(baseEntity.actor.fov)
+            entity.actor = new Actor(baseEntity.actor.fov, 
+              baseEntity.actor.state,
+              this.fsmManager.getMachine(baseEntity.actor.statemachine)
+            )
             break
           case 'destructable':
             entity.destructable = new Destructable(baseEntity.destructable.hp)
@@ -123,8 +126,8 @@ class StateMachineManager {
    * @param {object} fsmDef - Object defining state. Each key is a state, each value is the _states function for that state
    */
   registerMachine(id, fsmDef) {
+    this._machines[id] = {}
     for(const state in fsmDef) {
-      console.log(fsmDef[state])
       this._machines[id][state] = this._states[fsmDef[state]]
     }
   }
@@ -135,13 +138,15 @@ class StateMachineManager {
    * @return {Object} - State machine
    */
   getMachine(id) {
-    return machines[id]
+    return this._machines[id]
   }
 }
 
 //Component definitions
-var Actor = function(fov) {
+var Actor = function(fov, state, statemachine) {
   this.fov = fov
+  this.state = state
+  this.statemachine = statemachine
 }
 
 var Destructable = function(hp) {

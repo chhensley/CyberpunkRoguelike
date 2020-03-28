@@ -8,7 +8,9 @@
   },
   "ganger": {
     "actor": {
-      "fov": 20
+      "fov": 20,
+      "state": "wait",
+      "statemachine": "ganger"
     },
     "destructable": {
       "hp": 5,

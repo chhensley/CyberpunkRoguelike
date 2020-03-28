@@ -86,8 +86,19 @@ msgManager.addHandler(
         }
         msg.entity.position = position
         break
+      case 'ai_process':
+        var actor = msg.entity.actor
+        actor.statemachine[actor.state](msg.entity)
+        break
       case 'app_start':
         fovMap = generateFOVMap()
+        break
+      case 'turn_npc':
+        var view = entityManager.getView('actor','position')
+       for(const entity of view) {
+          if(entity != player)
+            msgManager.msgAIProcess(entity)
+        }
         break
     }
   }
