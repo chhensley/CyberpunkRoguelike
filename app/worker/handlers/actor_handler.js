@@ -40,6 +40,13 @@ function generateFOVMap() {
   return fovMap
 }
 
+//Register state listeners
+
+function stateAttack(entity){}
+function stateWait(entity){}
+
+entityManager.fsmManager.registerStates(stateAttack, stateWait)
+
 //Register event listeners
 function onPersonDestroy() {
   delete this.actor
@@ -81,6 +88,7 @@ msgManager.addHandler(
         break
       case 'app_start':
         fovMap = generateFOVMap()
+        console.log(entityManager.fsmManager)
         break
     }
   }

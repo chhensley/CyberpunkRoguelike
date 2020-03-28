@@ -11,14 +11,7 @@ class EntityManager {
   _entities = []
   _listeners = {}
 
-  /**
-   * Registers single event listeners
-   * @param {string} id - key for event listener in _listeners dictionary
-   * @param {function} listener - event listener
-   */
-  addListener(id, listener) {
-    this._listeners[id] = listener
-  }
+  fsmManager = new StateMachineManager()
 
   /**
    * Registers multiple event listeners
@@ -26,7 +19,6 @@ class EntityManager {
    * @param {function, function, ...} - One or more functions to register
    */
   addListeners() {
-    console.log(arguments[0])
     for(var i = 0; i < arguments.length; i++) {
       this._listeners[arguments[i].name] = arguments[i]
     }
@@ -106,8 +98,30 @@ class EntityManager {
   }
 }
 
-//Default listener
-function onDefault(entity) {}
+//Centralizes management of all fine state machines
+class StateMachineManager {
+
+  //Do not modify these directly
+  _states = {}
+  _machines = {}
+
+  registerStates() {
+    for(var i = 0; i < arguments.length; i++) {
+      this._states[arguments[i].name] = arguments[i]
+    }
+  }
+
+  registerMachine(id, fsmDef) {
+    for(const state in fsmDef) {
+      console.log(fsmDef[state])
+      this._machines[id][state] = this._states[fsmDef[state]]
+    }
+  }
+
+  getMachine(id) {
+    return machines[id]
+  }
+}
 
 //Component definitions
 var Actor = function(fov) {

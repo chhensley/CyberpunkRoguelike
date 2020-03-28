@@ -1,0 +1,6 @@
+{
+  "ganger": {
+    "attack": "stateAttack",
+    "wait": "stateWait"
+  }
+}

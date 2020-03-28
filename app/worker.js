@@ -19,6 +19,19 @@ function center(min, max) {
 }
 
 /**
+ * Returns an object created from merging json from one or more urls
+ * @param {string[]} urls - list of .json file urls
+ * @return {object} - merged contents of the .json file
+ */
+function loadJson(urls) {
+  var json = {}
+  for(const url of urls) {
+    json = {...json, ...getJson(site + url)}
+  }
+  return json
+}
+
+/**
  * Returns a random integer within a range
  * @param {number} min - minimum value
  * @param {number} max - maximum value
@@ -46,35 +59,9 @@ var site = location.href.substring(0, location.href.lastIndexOf('/') + 1)
 
 importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/entity.js', site + 'worker/msgmanager.js')
 
-//Load game configuration
+//Load game file configuration
 var manifest = getJson(site + 'manifest.json')
 var config = getJson(site + manifest.config)
-var gameData = {
-  colors: {},
-  tiles: {},
-  objects: {
-  }
-}
-
-//Load colors
-for(const url of manifest.colors) {
-  gameData.colors = {...gameData.colors, ...getJson(site + url)}
-}
-
-//Load game tiles
-for(const url of manifest.tiles)
- {
-  var tiles = getJson(site + url)
-  for(const key in tiles) {
-    const tile = tiles[key]
-    gameData.tiles[key] = new Tile(tile.char, tile.color, tile.alpha?tile.alpha:1, tile.blockMove, tile.blockLOS)
-  }
-}
-
-//Load game objects
-for(const url of manifest.objects) {
-  gameData.objects = {...gameData.objects, ...getJson(site + url)}
-}
 
 //Intialize game state
 var entityManager = new EntityManager()
@@ -84,6 +71,35 @@ var msgManager = new MsgManager()
 for(const handler of manifest.handlers) {
   importScripts(site + handler)
 }
+
+//Load game data
+var gameData = {}
+
+//Load colors
+gameData.colors = loadJson(manifest.colors)
+
+//Load game tiles
+gameData.tiles = {}
+for(const url of manifest.tiles)
+ {
+  var tiles = getJson(site + url)
+  for(const key in tiles) {
+    const tile = tiles[key]
+    gameData.tiles[key] = new Tile(tile.char, tile.color, tile.alpha?tile.alpha:1, tile.blockMove, tile.blockLOS)
+  }
+}
+
+//Load finite state machines
+for(const url of manifest.statemachines)
+ {
+  var statemachines = getJson(site + url)
+  for(const key in statemachines) {
+    entityManager.fsmManager.registerMachine(key, statemachines[key])
+  }
+}
+
+//Load game objects
+gameData.objects = loadJson(manifest.objects)
 
 //Place player on map
 var player

@@ -2,6 +2,7 @@
   "config": "config.json",
   "colors": ["data/colors.json"],
   "tiles": ["data/tiles.json"],
+  "statemachines": ["data/statemachines.json"],
   "objects": ["data/objects.json"],
   "handlers": [
     "worker/handlers/factory_handler.js",
