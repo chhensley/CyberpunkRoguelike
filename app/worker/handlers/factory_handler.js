@@ -151,7 +151,7 @@ function generateCityBlock(tree) {
     createDoors(node, map)
   }
 
-  addGangs(tree, map)
+  addGang(tree, map)
 
   //Convert game map into entities
   for(var x = 0; x < config.map.width; x++) {
