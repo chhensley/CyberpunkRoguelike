@@ -105,6 +105,26 @@ function createDoors(node, map) {
   } 
 }
 
+function addGang(tree, map) {
+  if(tree.children.length) {
+    addGang(tree.children[randInt(0, tree.children.length - 1)], map)
+  } else {
+    var position = tree.parent.isVertical?center(
+      {x: tree.parent.children[0].max.x, y: tree.parent.children[0].min.y}, 
+      {x: tree.parent.children[1].min.x, y: tree.parent.children[1].max.y}
+    ):center(
+      {x: tree.parent.children[0].min.x, y: tree.parent.children[0].max.y}, 
+      {x: tree.parent.children[1].max.x, y: tree.parent.children[1].min.y}
+    )
+    map[position.x][position.y] = 'ganger'
+    for(var i = 0; i < randInt(1,3); i++) {
+      let dx = randInt(-1, 1)
+      let dy = randInt(-1, 1)
+      if(!map[position.x + dx][position.y + dy]) map[position.x + dx][position.y + dy] = 'ganger'
+    }
+  }
+}
+
 /**
  * Creats a city block map from a binary space partition tree
  * @param {BSPTree} tree
@@ -131,6 +151,8 @@ function generateCityBlock(tree) {
     createDoors(node, map)
   }
 
+  addGangs(tree, map)
+
   //Convert game map into entities
   for(var x = 0; x < config.map.width; x++) {
     map.push([])
@@ -152,9 +174,6 @@ function generateCityBlock(tree) {
     {x: tree.children[0].min.x, y: tree.children[0].max.y}, 
     {x: tree.children[1].max.x, y: tree.children[1].min.y}
   )
-
-  var ganger = entityManager.createEntity('ganger')
-  ganger.position = tree.isVertical?new Position(player.position.x, player.position.y + 5):new Position(player.position.x + 5, player.position.y)
 }
 
 msgManager.addHandler(

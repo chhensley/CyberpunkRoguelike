@@ -3,6 +3,10 @@
     "actor": {
       "fov": 25
     },
+    "destructable": {
+      "hp": 12,
+      "onDestroy": "onPlayerDestroy"
+    },
     "id": "player",
     "tile": "player"
   },

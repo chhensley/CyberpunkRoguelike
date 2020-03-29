@@ -57,6 +57,10 @@ class MsgManager {
     this._msgStack.push({id: 'app_start'})
   }
 
+  msgAppGameOver() {
+    this._msgStack.push({id: 'app_gameover'})
+  }
+
   msgTurnStart() {
     this._msgStack.push({id: 'turn_start'})
   }

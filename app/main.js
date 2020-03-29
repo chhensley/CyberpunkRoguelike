@@ -23,6 +23,7 @@ term.setOptions(config.terminal);
 
 //Initialize input
 var inputLock = false
+var gameOver = false
 
 //Initialize message log
 for(let i = 0; i < config.messageLog.history; i++) {
@@ -37,14 +38,13 @@ document.body.onload = function() {
 
 worker.onmessage = function(e) {
   switch(e.data.id) {
-    case 'term_refresh':
-      refreshTerm(e.data.body)
+    case 'game_over':
+      gameOver = true
+      term.clear()
+      term.draw(30, 30, 'GAME OVER, MAN!')
       break
     case 'input_unlock':
       inputLock = false
-      break
-    case 'set_value':
-      document.getElementById(e.data.body.property).innerHTML = e.data.body.value
       break
     case 'log_msg':
       const msgLog = document.getElementById('msglog')
@@ -52,6 +52,15 @@ worker.onmessage = function(e) {
       msg.innerHTML = e.data.body
       msgLog.removeChild(msgLog.childNodes[0])
       msgLog.appendChild(msg)
+      break
+    case 'set_value':
+      var element = document.getElementById(e.data.body.property)
+      element.innerHTML = e.data.body.value
+      if(e.data.body.color)
+        element.style.color = e.data.body.color
+      break
+    case 'term_refresh':
+      if(!gameOver) refreshTerm(e.data.body)
       break
   }
 }
@@ -77,7 +86,7 @@ function refreshTerm(map) {
  *    Keyboard input
  */
 function keyInput(key) {
-  if(!inputLock) {
+  if(!inputLock && !gameOver) {
     inputLock = true;
     worker.postMessage({id: 'keypress', body: key})
   }

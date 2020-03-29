@@ -16,10 +16,21 @@ msgManager.addHandler(
   function(msg, msgManager) {
     switch(msg.id) {
     case 'app_start':
+      msgManager.pushUIMsg({id: 'set_value', body: {property: 'total_hp', value: player.destructable.hp}})
     case 'turn_end':
+      var currentHP =  player.destructable.hp - player.destructable.dmg
+      var color = gameData.colors['term00']
+      if(currentHP <= player.destructable.hp/4)
+        color = gameData.colors['critical00']
+      else if(currentHP <= player.destructable.hp/2)
+        color = gameData.colors['term01']
+      msgManager.pushUIMsg({id: 'set_value', body: {property: 'current_hp', value: currentHP, color: color}})
     case 'term_refresh':
       const view = entityManager.getView('position', 'tile')
       msgManager.pushUIMsg({id: 'term_refresh', body: buildMap(view)})
+      break
+    case 'app_gameover':
+      msgManager.pushUIMsg({id: 'game_over'})
       break
     case 'key_input':
       switch(msg.key) {

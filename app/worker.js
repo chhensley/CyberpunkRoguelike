@@ -71,6 +71,8 @@ function fovCallback(x, y) {
  * @return {boolean} - true if entity can move through coordinates
  */
 function pathCallback(x,y) {
+  if(x < 0 || x >= config.map.width || y < 0 || y >= config.map.height) return false
+  
   for(const entity of entityManager.atPosition(x, y)) {
     if(entity.tile.blockMove) return false
   }
@@ -83,7 +85,7 @@ function pathCallback(x,y) {
  */
 var site = location.href.substring(0, location.href.lastIndexOf('/') + 1)
 
-importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/entity.js', site + 'worker/msgmanager.js')
+importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/entity.js', site + 'worker/msgmanager.js', site + 'worker/pathfinding.js')
 
 var fov = new ROT.FOV.RecursiveShadowcasting(fovCallback)
 

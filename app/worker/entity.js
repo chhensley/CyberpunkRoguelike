@@ -105,7 +105,6 @@ class EntityManager {
     return view
   }
 
-
   /**
    * Returns array of entities at the given coordinates
    * @param {*} x - x coordinate
@@ -184,6 +183,7 @@ var Actor = function(fov, state, statemachine) {
   this.fov = fov
   this.state = state
   this.statemachine = statemachine
+  this.knowledge = {}
 }
 
 var Destructable = function(hp) {
