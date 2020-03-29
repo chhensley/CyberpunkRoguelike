@@ -60,8 +60,7 @@ class EntityManager {
             )
             break
           case 'destructable':
-            entity.destructable = new Destructable(baseEntity.destructable.hp)
-            entity.onDestroy = this._listeners[baseEntity.destructable.onDestroy]
+            entity.destructable = new Destructable(baseEntity.destructable.hp, this._listeners[baseEntity.destructable.onDestroy])
             break
           case 'id':
             entity.id = baseEntity.id
@@ -186,9 +185,11 @@ var Actor = function(fov, state, statemachine) {
   this.knowledge = {}
 }
 
-var Destructable = function(hp) {
+var Destructable = function(hp, onDestroy) {
   this.hp = hp
   this.dmg = 0
+  this.onDestroy = onDestroy
+  console.log(this.onDestroy)
 }
 
 var Position = function(x, y) {

@@ -77,15 +77,17 @@ function stateWait(entity) {
 entityManager.fsmManager.registerStates(stateAttack, stateWait)
 
 //Register event listeners
-function onPersonDestroy() {
-  delete this.actor
-  delete this.hiddenTile
-  this.tile = gameData.tiles['splat']
-  delete this.destructable
-  msgManager.msgLogMessage(setUpper(this.id + ' dies'))
+function onPersonDestroy(entity) {
+  console.log(entity)
+  delete entity.actor
+  delete entity.hiddenTile
+  entity.tile = gameData.tiles['splat']
+  entity.id = 'corpse'
+  delete entity.destructable
+  msgManager.msgLogMessage(setUpper(entity.id + ' dies'))
 }
 
-function onPlayerDestroy() {
+function onPlayerDestroy(entity) {
   msgManager.msgAppGameOver()
   msgManager.msgLogMessage('Player died')
 }
@@ -98,7 +100,7 @@ msgManager.addHandler(
     switch(msg.id) {
       case 'actor_damage':
         msg.trgt.destructable.dmg += randInt(1, 3)
-        if(msg.trgt.destructable.dmg >= msg.trgt.destructable.hp) msg.trgt.onDestroy()
+        if(msg.trgt.destructable.dmg >= msg.trgt.destructable.hp) msg.trgt.destructable.onDestroy(msg.trgt)
         var logMsg = msg.src.id + ' punches ' + msg.trgt.id
         msgManager.msgLogMessage(setUpper(logMsg))
         break

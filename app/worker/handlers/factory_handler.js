@@ -105,6 +105,11 @@ function createDoors(node, map) {
   } 
 }
 
+/**
+ * Adds a gang to the game map
+ * @param {BSPTree} tree
+ * @param {string[][]} map 
+ */
 function addGang(tree, map) {
   if(tree.children.length) {
     addGang(tree.children[randInt(0, tree.children.length - 1)], map)
