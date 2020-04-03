@@ -4,9 +4,10 @@
   "tiles": ["data/tiles.json"],
   "statemachines": ["data/statemachines.json"],
   "objects": ["data/objects.json"],
-  "handlers": [
-    "worker/handlers/factory_handler.js",
-    "worker/handlers/actor_handler.js",
-    "worker/handlers/ui_handler.js"
+  "listeners": [
+    "worker/listeners/factory.js",
+    "worker/listeners/actor.js",
+    "worker/listeners/ai.js",
+    "worker/listeners/ui.js"
   ]
 }

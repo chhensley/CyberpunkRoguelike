@@ -34,8 +34,8 @@ var factory = new EntityFactory()
 entityManager.factory = factory
 
 //Load message handlers
-for(const handler of manifest.handlers) {
-  importScripts(site + handler)
+for(const url of manifest.listeners) {
+  importScripts(site + url)
 }
 
 //Load colors
@@ -64,7 +64,7 @@ this.postMessage({id: 'set_value', body: {'property': 'seed', 'value': ROT.RNG.g
 
 //Run game setup
 msgManager.msgStack.msgAppStart()
-msgManager.run()
+msgManager.process()
 for(var msg of msgManager._uiMsgQueue) {
   this.postMessage(msg)
 }
@@ -76,7 +76,7 @@ onmessage = function(e) {
     msgManager.msgStack.msgKeyInput(e.data.body)
     msgManager.msgStack.msgTurnStart()
 
-    msgManager.run()
+    msgManager.process()
     for(var msg of msgManager._uiMsgQueue) {
       this.postMessage(msg)
     }

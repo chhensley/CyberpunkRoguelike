@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 - 2020
+ * Copyright 2020
  * Do as thou wilt shall be the whole of the License.
  * Love is the License, love under will.
  */
@@ -55,7 +55,7 @@ function stateAttack(entity) {
   }
   
   var next = simplePathFinding(entity.position, player.position, pathCallback)
-  msgManager.msgActorMove(entity, next.x - entity.position.x, next.y - entity.position.y)
+  msgManager.msgStack.msgActorMove(entity, next.x - entity.position.x, next.y - entity.position.y)
 }
 
 function stateWait(entity) {
@@ -69,7 +69,7 @@ function stateWait(entity) {
   //If player is found, attack
   if(entity.actor.knowledge.playerPos) {
     entity.actor.state = 'attack'
-    msgManager.msgAIProcess(entity)
+    msgManager.msgStack.msgAIProcess(entity)
     return
   }
 }
@@ -82,67 +82,28 @@ function onPersonDestroy(entity) {
   delete entity.actor
   delete entity.hiddenTile
   entity.tile = entityManager.factory.tiles.get('splat')
-  msgManager.msgLogMessage(setUpper(entity.id + ' dies'))
+  msgManager.msgStack.msgLogMessage(setUpper(entity.id + ' dies'))
   entity.id = 'corpse'
   delete entity.destructable
 }
 
 function onPlayerDestroy(entity) {
-  msgManager.msgAppGameOver()
-  msgManager.msgLogMessage('Player died')
+  msgManager.msgStack.msgAppGameOver()
+  msgManager.msgStack.msgLogMessage('Player died')
 }
 
 entityManager.factory.addListeners(onPlayerDestroy, onPersonDestroy)
 
-//Register actor message handler
-msgManager.addHandler(
-  function(msg, msgManager) {
-    switch(msg.id) {
-      case 'actor_damage':
-        msg.trgt.destructable.dmg += randInt(1, 3)
-        if(msg.trgt.destructable.dmg >= msg.trgt.destructable.hp) msg.trgt.destructable.onDestroy(msg.trgt)
-        var logMsg = msg.src.id + ' punches ' + msg.trgt.id
-        msgManager.msgLogMessage(setUpper(logMsg))
-        break
-      case 'actor_move':
-        //Check that move is in bounds
-        var position = new Position(msg.entity.position.x + msg.dx, msg.entity.position.y + msg.dy)
-        if(position.x < 0 || position.y < 0 || position.x >= config.map.width || 
-          position.y >= config.map.height) {
-            return
-          }
+msgManager.registerCallback('ai_process', function(msg, msgStack, entityManager){
+  var actor = msg.entity.actor
+  actor.statemachine[actor.state](msg.entity)
+})
 
-        //Check that the square is not occupied
-        var view = entityManager.getView('position', 'tile')
-        for(const entity of entityManager.atPosition(position.x, position.y)) {
-          if(entity.tile.blockMove) {
-            if(entity.destructable) msgManager.msgActorDamage(msg.entity, entity)
-            return
-          }
-        }
-
-        //Update internally stored map
-        var entityMapPosition = entityManager.atPosition(msg.entity.position.x, msg.entity.position.y)
-        var index = entityMapPosition.indexOf(msg.entity)
-        if (index !== -1) entityMapPosition.splice(index, 1);
-        entityManager.atPosition(position.x, position.y).push(msg.entity)
-        
-        msg.entity.position = position
-        break
-      case 'ai_process':
-        var actor = msg.entity.actor
-        actor.statemachine[actor.state](msg.entity)
-        break
-      case 'app_start':
-        entityManager.regenerateGameMap(config.map.width, config.map.height)
-        break
-      case 'turn_npc':
-        var view = entityManager.getView('actor','position')
-        for(const entity of view) {
-          if(entity != player)
-            msgStack.msgAIProcess(entity)
-        }
-        break
-    }
+msgManager.registerCallback('turn_npc', function(msg, msgStack, entityManager){
+  var view = entityManager.getView('actor','position')
+  entityManager.regenerateGameMap(config.map.width, config.map.height)
+  for(const entity of view) {
+    if(entity != player)
+      msgStack.msgAIProcess(entity)
   }
-)
+})

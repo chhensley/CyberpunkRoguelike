@@ -10,18 +10,22 @@ importScripts(site + 'worker/messaging/msgstack.js')
 class MsgManager {
 
   //Do not modify these directly
+  _callbacks = {}
   _handlers = []
   _uiMsgQueue = []
 
   msgStack = new MessageStack()
 
   /**
-   * Registers a mesage handler
-   * This is used in the .js files for the individual handler
-   * @param {function} handler 
+   * Registers a callback
+   * Callback: function(msg, msgStack, entityManager)
+   * @param {string} msgId - messages with this id are passed to listenre
+   * @param {function} callback - listener callback 
    */
-  addHandler(handler) {
-    this._handlers.push(handler)
+  registerCallback(msgId, callback) {
+    if(this._callbacks[msgId] == null) this._callbacks[msgId] = []
+
+    this._callbacks[msgId].push(callback)
   }
 
   /**
@@ -35,12 +39,13 @@ class MsgManager {
   /**
    * Processes all messages in the current message stack
    */
-  run() {
+  process() {
     this._uiMsgQueue = []
     while(!this.msgStack.isEmpty()) {
       const msg = this.msgStack.pop()
-      for(const handler of this._handlers) {
-        handler(msg, this.msgStack)
+      if(!this._callbacks[msg.id]) continue
+      for(const callback of this._callbacks[msg.id] ) {
+        callback(msg, this.msgStack, entityManager)
       }
     }
   }

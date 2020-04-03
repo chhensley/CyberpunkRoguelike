@@ -182,10 +182,7 @@ function generateCityBlock(tree) {
   )
 }
 
-msgManager.addHandler(
-  function(msg, msgManager) {
-    if(msg.id == 'app_start') {
-      generateCityBlock(generateBSPTree(bspConfig.depth))
-    }
-  }
-)
+//Message listener callbacks
+msgManager.registerCallback('app_start', function(msg, msgStack, entityManager) {
+  generateCityBlock(generateBSPTree(bspConfig.depth))
+})

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 - 2020
+ * Copyright 2020
  * Do as thou wilt shall be the whole of the License.
  * Love is the License, love under will.
  */
@@ -12,49 +12,7 @@ const offset = {
   maxY: Math.ceil(config.terminal.height/2)
 }
 
-msgManager.addHandler(
-  function(msg, msgStack) {
-    switch(msg.id) {
-    case 'app_start':
-      msgManager.pushUIMsg({id: 'set_value', body: {property: 'total_hp', value: player.destructable.hp}})
-    case 'turn_end':
-      var currentHP =  player.destructable.hp - player.destructable.dmg
-      var color = entityManager.factory.colors.get('term00')
-      if(currentHP <= player.destructable.hp/4)
-        color = entityManager.factory.colors.get('critical00')
-      else if(currentHP <= player.destructable.hp/2)
-        color = entityManager.factory.colors.get('term01')
-      msgManager.pushUIMsg({id: 'set_value', body: {property: 'current_hp', value: currentHP, color: color}})
-    case 'term_refresh':
-      const view = entityManager.getView('position', 'tile')
-      msgManager.pushUIMsg({id: 'term_refresh', body: buildMap(view)})
-      break
-    case 'app_gameover':
-      msgManager.pushUIMsg({id: 'game_over'})
-      break
-    case 'key_input':
-      switch(msg.key) {
-        case 'w':
-          msgStack.msgActorMove(player, 0, -1)
-          break
-        case 's':
-          msgStack.msgActorMove(player, 0, 1)
-          break
-        case 'a':
-          msgStack.msgActorMove(player, -1, 0)
-          break
-        case 'd':
-          msgStack.msgActorMove(player, 1, 0)
-          break
-      }
-      break
-    case 'log_message':
-      msgStack.pushUIMsg({id: 'log_msg', body: msg.logMsg})
-      break
-  }
-})
-
- /**
+/**
  * Builds the map to be displayed to the player from an entity view
  * All entities must have position and tile
  * @param {array} view 
@@ -82,7 +40,6 @@ function buildMap(view) {
     minY = config.map.height - config.terminal.height;
   }
   var visibleMap = [] //Map visibile to player
-
 
   //Create empty map
   for(var x = 0; x < config.terminal.width; x++) {
@@ -116,3 +73,63 @@ function buildMap(view) {
 
   return visibleMap
 }
+
+/**
+ * Update full UI
+ * @param {Object} entityManager 
+ */
+function updateUI(entityManager) {
+  //Update player Hitpoints
+  var currentHP =  player.destructable.hp - player.destructable.dmg
+  var color = entityManager.factory.colors.get('term00')
+  if(currentHP <= player.destructable.hp/4)
+    color = entityManager.factory.colors.get('critical00')
+  else if(currentHP <= player.destructable.hp/2)
+    color = entityManager.factory.colors.get('term01')
+  msgManager.pushUIMsg({id: 'set_value', body: {property: 'current_hp', value: currentHP, color: color}})
+  
+  //Update terminal
+  const view = entityManager.getView('position', 'tile')
+  msgManager.pushUIMsg({id: 'term_refresh', body: buildMap(view)})
+}
+
+//Message listener callbacks
+msgManager.registerCallback('app_start', function(msg, msgStack, entityManager) {
+  entityManager.regenerateGameMap(config.map.width, config.map.height)
+  msgManager.pushUIMsg({id: 'set_value', body: {property: 'total_hp', value: player.destructable.hp}})
+  updateUI(entityManager)
+})
+
+msgManager.registerCallback('turn_end', function(msg, msgStack, entityManager) {
+  updateUI(entityManager)
+})
+
+msgManager.registerCallback('term_refresh',  function(msg, msgStack, entityManager){
+  const view = entityManager.getView('position', 'tile')
+  msgManager.pushUIMsg({id: 'term_refresh', body: buildMap(view)})
+})
+
+msgManager.registerCallback('app_gameover', function(msg, msgStack, entityManager){
+  msgManager.pushUIMsg({id: 'game_over'})
+})
+
+msgManager.registerCallback('key_input', function(msg, msgStack, entityManager){
+  switch(msg.key) {
+    case 'w':
+      msgStack.msgActorMove(player, 0, -1)
+      break
+    case 's':
+      msgStack.msgActorMove(player, 0, 1)
+      break
+    case 'a':
+      msgStack.msgActorMove(player, -1, 0)
+      break
+    case 'd':
+      msgStack.msgActorMove(player, 1, 0)
+      break
+  }
+}) 
+
+msgManager.registerCallback('log_message', function(msg, msgStack, entityManager){
+  msgManager.pushUIMsg({id: 'log_msg', body: msg.logMsg})
+})
