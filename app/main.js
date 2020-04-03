@@ -1,5 +1,5 @@
 /**
- * Copyright 2019
+ * Copyright 2019 - 2020
  * Do as thou wilt shall be the whole of the License.
  * Love is the License, love under will.
  */
@@ -22,8 +22,9 @@ var term = new ROT.Display
 term.setOptions(config.terminal);
 
 //Initialize input
-var inputLock = false
-var gameOver = false
+var state = 'action'
+//var inputLock = false
+//var gameOver = false
 
 //Initialize message log
 for(let i = 0; i < config.messageLog.history; i++) {
@@ -39,12 +40,15 @@ document.body.onload = function() {
 worker.onmessage = function(e) {
   switch(e.data.id) {
     case 'game_over':
-      gameOver = true
+      //gameOver = true
+      state = 'game_over'
       term.clear()
       term.draw(30, 30, 'GAME OVER, MAN!')
       break
     case 'input_unlock':
-      inputLock = false
+      //inputLock = false
+      if(state == 'locked')
+        state = 'action'
       break
     case 'log_msg':
       const msgLog = document.getElementById('msglog')
@@ -60,7 +64,7 @@ worker.onmessage = function(e) {
         element.style.color = e.data.body.color
       break
     case 'term_refresh':
-      if(!gameOver) refreshTerm(e.data.body)
+      if(state != 'game_over') refreshTerm(e.data.body)
       break
   }
 }
@@ -86,8 +90,10 @@ function refreshTerm(map) {
  *    Keyboard input
  */
 function keyInput(key) {
-  if(!inputLock && !gameOver) {
-    inputLock = true;
+  //if(!inputLock && !gameOver) {
+  if(state == 'action') {
+    //inputLock = true;
+    state = 'locked'
     worker.postMessage({id: 'keypress', body: key})
   }
 }

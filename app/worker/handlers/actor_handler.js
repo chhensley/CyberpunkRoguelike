@@ -74,17 +74,17 @@ function stateWait(entity) {
   }
 }
 
-entityManager.fsmManager.registerStates(stateAttack, stateWait)
+entityManager.factory.fsmManager.registerStates(stateAttack, stateWait)
+
 
 //Register event listeners
 function onPersonDestroy(entity) {
-  console.log(entity)
   delete entity.actor
   delete entity.hiddenTile
-  entity.tile = gameData.tiles['splat']
+  entity.tile = entityManager.factory.tiles.get('splat')
+  msgManager.msgLogMessage(setUpper(entity.id + ' dies'))
   entity.id = 'corpse'
   delete entity.destructable
-  msgManager.msgLogMessage(setUpper(entity.id + ' dies'))
 }
 
 function onPlayerDestroy(entity) {
@@ -92,7 +92,7 @@ function onPlayerDestroy(entity) {
   msgManager.msgLogMessage('Player died')
 }
 
-entityManager.addListeners(onPlayerDestroy, onPersonDestroy)
+entityManager.factory.addListeners(onPlayerDestroy, onPersonDestroy)
 
 //Register actor message handler
 msgManager.addHandler(

@@ -85,7 +85,7 @@ function pathCallback(x,y) {
  */
 var site = location.href.substring(0, location.href.lastIndexOf('/') + 1)
 
-importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/entity.js', site + 'worker/msgmanager.js', site + 'worker/pathfinding.js')
+importScripts(site + 'shared/rot.min.js', site + 'shared/util.js', site + 'worker/ecs/entity.js', site + 'worker/msgmanager.js', site + 'worker/pathfinding.js')
 
 var fov = new ROT.FOV.RecursiveShadowcasting(fovCallback)
 
@@ -95,41 +95,38 @@ var config = getJson(site + manifest.config)
 
 //Intialize game state
 var entityManager = new EntityManager()
+var factory = EntityManager.factory
 var msgManager = new MsgManager()
+
+//Load game data
+var gameData = {}
+var factory = new EntityFactory()
+entityManager.factory = factory
 
 //Load message handlers
 for(const handler of manifest.handlers) {
   importScripts(site + handler)
 }
 
-//Load game data
-var gameData = {}
-
 //Load colors
-gameData.colors = loadJson(manifest.colors)
+for(const url of manifest.colors) { factory.colors.load(url) }
 
 //Load game tiles
-gameData.tiles = {}
-for(const url of manifest.tiles)
- {
-  var tiles = getJson(site + url)
-  for(const key in tiles) {
-    const tile = tiles[key]
-    gameData.tiles[key] = new Tile(tile.char, tile.color, tile.alpha?tile.alpha:1, tile.blockMove, tile.blockLOS)
-  }
-}
+for(const url of manifest.tiles) { factory.tiles.load(url, factory.colors) }
+
 
 //Load finite state machines
-for(const url of manifest.statemachines)
- {
+for(const url of manifest.statemachines){
   var statemachines = getJson(site + url)
   for(const key in statemachines) {
-    entityManager.fsmManager.registerMachine(key, statemachines[key])
+    factory.fsmManager.registerMachine(key, statemachines[key])
   }
 }
 
 //Load game objects
-gameData.objects = loadJson(manifest.objects)
+for(const url of manifest.objects) {
+  factory.load(url)
+}
 
 //Place player on map
 var player

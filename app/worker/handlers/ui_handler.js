@@ -19,11 +19,11 @@ msgManager.addHandler(
       msgManager.pushUIMsg({id: 'set_value', body: {property: 'total_hp', value: player.destructable.hp}})
     case 'turn_end':
       var currentHP =  player.destructable.hp - player.destructable.dmg
-      var color = gameData.colors['term00']
+      var color = entityManager.factory.colors.get('term00')
       if(currentHP <= player.destructable.hp/4)
-        color = gameData.colors['critical00']
+        color = entityManager.factory.colors.get('critical00')
       else if(currentHP <= player.destructable.hp/2)
-        color = gameData.colors['term01']
+        color = entityManager.factory.colors.get('term01')
       msgManager.pushUIMsg({id: 'set_value', body: {property: 'current_hp', value: currentHP, color: color}})
     case 'term_refresh':
       const view = entityManager.getView('position', 'tile')
@@ -88,7 +88,7 @@ function buildMap(view) {
   for(var x = 0; x < config.terminal.width; x++) {
     visibleMap.push([])
     for(var y = 0; y < config.terminal.height; y++) {
-      visibleMap[x].push(gameData.tiles['emptyHidden'])
+      visibleMap[x].push(entityManager.factory.tiles.get('emptyHidden'))
     }
   }
   
@@ -105,7 +105,7 @@ function buildMap(view) {
     if (x < 0 || x >= config.map.width || y < 0 || y >= config.map.height)
       return
 
-    visibleMap[x - minX][y - minY] = gameData.tiles['empty']
+    visibleMap[x - minX][y - minY] = entityManager.factory.tiles.get('empty')
     for(const entity of entityManager.atPosition(x, y)) {
       
       if(!visibleMap[x - minX][y - minY].blockMove) {
