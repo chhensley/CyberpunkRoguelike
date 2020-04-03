@@ -14,7 +14,7 @@ importScripts(site + 'shared/rot.min.js',
   site + 'shared/util.js', 
   site + 'worker/common.js', 
   site + 'worker/ecs/entity.js', 
-  site + 'worker/msgmanager.js', 
+  site + 'worker/messaging/msgmanager.js', 
   site + 'worker/pathfinding.js'
 )
 
@@ -63,7 +63,7 @@ var player
 this.postMessage({id: 'set_value', body: {'property': 'seed', 'value': ROT.RNG.getSeed()}})
 
 //Run game setup
-msgManager.msgAppStart()
+msgManager.msgStack.msgAppStart()
 msgManager.run()
 for(var msg of msgManager._uiMsgQueue) {
   this.postMessage(msg)
@@ -71,10 +71,10 @@ for(var msg of msgManager._uiMsgQueue) {
 
 onmessage = function(e) {
   if(e.data.id == 'keypress') {
-    msgManager.msgTurnEnd()
-    msgManager.msgTurnNPC()
-    msgManager.msgKeyInput(e.data.body)
-    msgManager.msgTurnStart()
+    msgManager.msgStack.msgTurnEnd()
+    msgManager.msgStack.msgTurnNPC()
+    msgManager.msgStack.msgKeyInput(e.data.body)
+    msgManager.msgStack.msgTurnStart()
 
     msgManager.run()
     for(var msg of msgManager._uiMsgQueue) {

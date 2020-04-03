@@ -1,55 +1,23 @@
 /**
- * Copyright 2019
+ * Copyright 2020
  * Do as thou wilt shall be the whole of the License.
  * Love is the License, love under will.
  */
 
-// Centeralizes management of all messages
-class MsgManager {
-
-  //Do not modify these directly
-  _handlers = []
+/**
+ * Game message stack
+ */
+class MessageStack {
   _msgStack = []
-  _uiMsgQueue = []
 
-  /**
-   * Registers a mesage handler
-   * This is used in the .js files for the individual handler
-   * @param {function} handler 
-   */
-  addHandler(handler) {
-    this._handlers.push(handler)
+  //Pops last message from the stack
+  pop() {
+    return this._msgStack.pop()
   }
 
-  /**
-   * Adds a message to the queueu to be passed to main.js
-   * @param {Object} msg 
-   */
-  pushUIMsg(msg) {
-    this._uiMsgQueue.push(msg)
-  }
-
-  /**
-   * Adds a game message to the message stack
-   * Use this for dev only. Create a function for individual messages
-   * @param {Object} msg 
-   *    Message to add
-   */
-  pushMsg(msg) {
-    this._msgStack.push(msg)
-  }
-
-  /**
-   * Processes all messages in the current message stack
-   */
-  run() {
-    this._uiMsgQueue = []
-    while(this._msgStack.length) {
-      const msg = this._msgStack.pop()
-      for(const handler of this._handlers) {
-        handler(msg, this)
-      }
-    }
+  //Returns true if the stack is empty
+  isEmpty() {
+    return this._msgStack.length == 0
   }
 
   //Functions for pushing invidual messages

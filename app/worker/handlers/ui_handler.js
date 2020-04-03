@@ -13,7 +13,7 @@ const offset = {
 }
 
 msgManager.addHandler(
-  function(msg, msgManager) {
+  function(msg, msgStack) {
     switch(msg.id) {
     case 'app_start':
       msgManager.pushUIMsg({id: 'set_value', body: {property: 'total_hp', value: player.destructable.hp}})
@@ -35,21 +35,21 @@ msgManager.addHandler(
     case 'key_input':
       switch(msg.key) {
         case 'w':
-          msgManager.msgActorMove(player, 0, -1)
+          msgStack.msgActorMove(player, 0, -1)
           break
         case 's':
-          msgManager.msgActorMove(player, 0, 1)
+          msgStack.msgActorMove(player, 0, 1)
           break
         case 'a':
-          msgManager.msgActorMove(player, -1, 0)
+          msgStack.msgActorMove(player, -1, 0)
           break
         case 'd':
-          msgManager.msgActorMove(player, 1, 0)
+          msgStack.msgActorMove(player, 1, 0)
           break
       }
       break
     case 'log_message':
-      msgManager.pushUIMsg({id: 'log_msg', body: msg.logMsg})
+      msgStack.pushUIMsg({id: 'log_msg', body: msg.logMsg})
       break
   }
 })
