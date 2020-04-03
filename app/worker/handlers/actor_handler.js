@@ -140,7 +140,7 @@ msgManager.addHandler(
         var view = entityManager.getView('actor','position')
         for(const entity of view) {
           if(entity != player)
-            msgManager.msgAIProcess(entity)
+            msgStack.msgAIProcess(entity)
         }
         break
     }
