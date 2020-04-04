@@ -36,10 +36,12 @@ class MsgManager {
     this._uiMsgQueue.push(msg)
   }
 
+  //Returns true if there are more UI messages in the queue
   hasNextUIMsg() {
     return this._uiMsgQueue.length != 0
   }
 
+  //Returns next UI messages in the queue
   nextUIMsg() {
     if (!this._uiMsgQueue.length) return null
     const msg = this._uiMsgQueue[0]
@@ -47,16 +49,12 @@ class MsgManager {
     return msg
   }
 
-  /**
-   * Returns true if there are more messages to process in the stack
-   */
+  //Returns true if there are more messages to process in the stack
   hasNext() {
     return !this.msgStack.isEmpty()
   }
 
-  /**
-   * Processes the next mesage in the message stack
-   */
+  //Processes the next mesage in the message stack
   processNext() {
     const msg = this.msgStack.pop()
     if(this._callbacks[msg.id]) {
