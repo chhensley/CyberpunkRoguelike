@@ -82,14 +82,20 @@ class EntityFactory {
           case 'destructable':
             entity.destructable = new Destructable(baseEntity.destructable.hp, baseEntity.destructable.actions)
             break
+          case 'hiddenTile':
+            entity.hiddenTile =  this.tiles.get(baseEntity.hiddenTile)
+            break
           case 'id':
             entity.id = baseEntity.id
             break
           case 'tile':
             entity.tile = this.tiles.get(baseEntity.tile)
             break
-          case 'hiddenTile':
-            entity.hiddenTile =  this.tiles.get(baseEntity.hiddenTile)
+          case 'usable':
+            entity.usable = new Usable()
+            for(const action in baseEntity.usable) {
+              entity.usable.addAction(action, baseEntity.usable[action].actions, baseEntity.usable[action].description)
+            }
             break
         }
       }

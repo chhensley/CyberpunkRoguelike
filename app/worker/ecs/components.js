@@ -54,3 +54,28 @@ var Tile = function(char, color, alpha, blockMove, blockLOS) {
   this.blockMove = blockMove
   this.blockLOS = blockLOS
 }
+
+/**
+ * Marks a game item as being usable
+ */
+var Usable = function() {
+  /**
+   * Adds a legal action
+   * @param {string} name - name of action (ie: pick up, drop, consume)
+   * @param {Object[]} actions - messages pusshed when this action is triggered
+   * @param {string} description - description to be shown in the UI 
+   */
+  this.addAction = function(name, actions, description) {
+    this[name] = {}
+    this[name].actions = actions
+    this[name].description = description
+  }
+
+  /**
+   * Delets the named action
+   * @param {string} name - name of action to delete
+   */
+  this.deleteAction = function(name) {
+    delete this[name]
+  }
+}

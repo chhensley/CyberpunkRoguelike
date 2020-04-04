@@ -13,8 +13,13 @@ class EntityManager {
 
   factory = new EntityFactory()
 
-  //onDestroy event handler
-  onDestroy = function() {}
+  _getIndex(entity) {
+    for(var i = 0; i < this._entities.length; i++) {
+      if(this._entities[i] == entity) return i
+    }
+
+    return null
+  }
 
   /**
    * Creates a new entity
@@ -25,6 +30,11 @@ class EntityManager {
     var entity = factory.get(id)
     this._entities.push(entity)
     return entity
+  }
+
+  deleteEntity(entity) {
+    var index = this._getIndex(entity)
+    if (index != null) this._entities.splice(index, 1)
   }
 
   /**

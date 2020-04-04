@@ -3,9 +3,10 @@
   "colors": ["data/colors.json"],
   "tiles": ["data/tiles.json"],
   "statemachines": ["data/statemachines.json"],
-  "objects": ["data/objects.json"],
+  "objects": ["data/items.json", "data/objects.json"],
   "listeners": [
     "worker/listeners/factory.js",
+    "worker/listeners/action.js",
     "worker/listeners/actor.js",
     "worker/listeners/ai.js",
     "worker/listeners/damage.js",
