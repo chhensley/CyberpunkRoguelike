@@ -36,15 +36,31 @@ class MsgManager {
     this._uiMsgQueue.push(msg)
   }
 
+  hasNextUIMsg() {
+    return this._uiMsgQueue.length != 0
+  }
+
+  nextUIMsg() {
+    if (!this._uiMsgQueue.length) return null
+    const msg = this._uiMsgQueue[0]
+    this._uiMsgQueue.splice(0, 1)
+    return msg
+  }
+
   /**
-   * Processes all messages in the current message stack
+   * Returns true if there are more messages to process in the stack
    */
-  process() {
-    this._uiMsgQueue = []
-    while(!this.msgStack.isEmpty()) {
-      const msg = this.msgStack.pop()
-      if(!this._callbacks[msg.id]) continue
-      for(const callback of this._callbacks[msg.id] ) {
+  hasNext() {
+    return !this.msgStack.isEmpty()
+  }
+
+  /**
+   * Processes the next mesage in the message stack
+   */
+  processNext() {
+    const msg = this.msgStack.pop()
+    if(this._callbacks[msg.id]) {
+      for(const callback of this._callbacks[msg.id]) {
         callback(msg, this.msgStack, entityManager)
       }
     }

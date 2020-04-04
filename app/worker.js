@@ -18,6 +18,16 @@ importScripts(site + 'shared/rot.min.js',
   site + 'worker/pathfinding.js'
 )
 
+//Process all messages in the game message stack
+function processMessages() {
+  while(msgManager.hasNext()) {
+    msgManager.processNext()
+    while(msgManager.hasNextUIMsg()) {
+      this.postMessage(msgManager.nextUIMsg())
+    }
+  }
+}
+
 var fov = new ROT.FOV.RecursiveShadowcasting(fovCallback)
 
 //Load game file configuration
@@ -64,22 +74,18 @@ this.postMessage({id: 'set_value', body: {'property': 'seed', 'value': ROT.RNG.g
 
 //Run game setup
 msgManager.msgStack.msgAppStart()
-msgManager.process()
-for(var msg of msgManager._uiMsgQueue) {
-  this.postMessage(msg)
-}
+processMessages()
 
 onmessage = function(e) {
   if(e.data.id == 'keypress') {
+    //Main game loop
     msgManager.msgStack.msgTurnEnd()
     msgManager.msgStack.msgTurnNPC()
     msgManager.msgStack.msgKeyInput(e.data.body)
     msgManager.msgStack.msgTurnStart()
 
-    msgManager.process()
-    for(var msg of msgManager._uiMsgQueue) {
-      this.postMessage(msg)
-    }
+    processMessages()
+
     this.postMessage({id: 'input_unlock'})
   }
 }
