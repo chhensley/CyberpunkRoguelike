@@ -76,12 +76,41 @@ this.postMessage({id: 'set_value', body: {'property': 'seed', 'value': ROT.RNG.g
 msgManager.msgStack.msgAppStart()
 processMessages()
 
+//var testEnt = entityManager.createEntity('pills')
+//testEnt.position = new Position(player.position.x + 1, player.position.y)
+
+var uiActions
+
 onmessage = function(e) {
+  var msg
+
   if(e.data.id == 'keypress') {
-    //Main game loop
+    msg = {id: 'key_input', key: e.data.body}
+  }
+
+  if(e.data.id == 'use') {
+    uiActions = []
+    const view = entityManager.getView('position', 'usable')
+    for(const entity of view) {
+      if(entity.position.x != player.position.x || entity.position.y != player.position.y) continue
+      for(const action in entity.usable) {
+        if(!['addAction', 'deleteAction'].includes(action))
+          uiActions.push({
+            entity: entity,
+            action: action
+          })
+      }
+    }
+    if(uiActions.length == 1) {
+      msg = {id: 'action_use', action: uiActions[0].action, src: player, trgt: uiActions[0].entity }
+    }
+  }
+
+  //Main game loop
+  if (msg) {
     msgManager.msgStack.msgTurnEnd()
     msgManager.msgStack.msgTurnNPC()
-    msgManager.msgStack.msgKeyInput(e.data.body)
+    msgManager.msgStack.push(msg)
     msgManager.msgStack.msgTurnStart()
 
     processMessages()

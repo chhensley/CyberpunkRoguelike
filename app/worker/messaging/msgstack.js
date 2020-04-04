@@ -15,6 +15,11 @@ class MessageStack {
     return this._msgStack.pop()
   }
 
+  //Pushes message on stack - only use when specific msg methods aren't appropriate
+  push(msg) {
+    this._msgStack.push(msg)
+  }
+
   //Returns true if the stack is empty
   isEmpty() {
     return this._msgStack.length == 0

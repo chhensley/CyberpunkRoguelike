@@ -14,8 +14,7 @@ var site = location.href.substring(0, location.href.lastIndexOf('/') + 1)
 var worker = new Worker(site + 'app/worker.js')
 
 //Retrieve configuration info
-var manifest = getJson(site + 'app/manifest.json')
-var config = getJson(site + 'app/' + manifest.config)
+const config = getJson(site + 'app/' + getJson(site + 'app/manifest.json').config)
 
 //Intialize simulated terminal
 var term = new ROT.Display
@@ -23,8 +22,6 @@ term.setOptions(config.terminal);
 
 //Initialize input
 var state = 'action'
-//var inputLock = false
-//var gameOver = false
 
 //Initialize message log
 for(let i = 0; i < config.messageLog.history; i++) {
@@ -40,13 +37,11 @@ document.body.onload = function() {
 worker.onmessage = function(e) {
   switch(e.data.id) {
     case 'game_over':
-      //gameOver = true
       state = 'game_over'
       term.clear()
       term.draw(30, 30, 'GAME OVER, MAN!')
       break
     case 'input_unlock':
-      //inputLock = false
       if(state == 'locked')
         state = 'action'
       break
@@ -90,11 +85,12 @@ function refreshTerm(map) {
  *    Keyboard input
  */
 function keyInput(key) {
-  //if(!inputLock && !gameOver) {
   if(state == 'action') {
-    //inputLock = true;
     state = 'locked'
-    worker.postMessage({id: 'keypress', body: key})
+    if (['w', 's', 'a', 'd'].includes(key) ) 
+      worker.postMessage({id: 'keypress', body: key})
+    if(key == ' ')
+      worker.postMessage({id: 'use'})
   }
 }
 
@@ -117,3 +113,7 @@ document.getElementById('left').addEventListener('click', function(e){
 document.getElementById('right').addEventListener('click', function(e){
   keyInput('d')
 }, false)
+
+document.getElementById('use').addEventListener('click', function(e){
+  keyInput(' ')
+},)
