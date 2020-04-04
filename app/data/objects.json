@@ -5,7 +5,7 @@
     },
     "destructable": {
       "hp": 12,
-      "onDestroy": "onPlayerDestroy"
+      "actions": ["destroy_player"]
     },
     "id": "player",
     "tile": "player"
@@ -18,7 +18,7 @@
     },
     "destructable": {
       "hp": 5,
-      "onDestroy": "onPersonDestroy"
+      "actions": ["destroy_person"]
     },
     "id": "ganger",
     "tile": "ganger"

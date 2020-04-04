@@ -10,8 +10,7 @@ importScripts(site + 'worker/ecs/statemachine.js')
 //Factory class for creating entities and components
 class EntityFactory {
 
-  //Do not directly access these members
-  _listeners = []
+  //Do not directly access this member
   _entities = {}
 
   fsmManager = new StateMachineManager()
@@ -81,7 +80,7 @@ class EntityFactory {
             )
             break
           case 'destructable':
-            entity.destructable = new Destructable(baseEntity.destructable.hp, this._listeners[baseEntity.destructable.onDestroy])
+            entity.destructable = new Destructable(baseEntity.destructable.hp, baseEntity.destructable.actions)
             break
           case 'id':
             entity.id = baseEntity.id

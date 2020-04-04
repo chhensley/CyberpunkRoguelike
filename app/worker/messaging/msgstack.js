@@ -41,16 +41,12 @@ class MessageStack {
     this._msgStack.push({id: 'turn_end'})
   }
 
-  /**
-   * Process the AI for an entity
-   * @param {Object} entity
-   */
-  msgAIProcess(entity) {
-    this._msgStack.push({id: 'ai_process', entity: entity})
+  msgActionDamage(src, trgt) {
+    this._msgStack.push({id: 'action_damage', src: src, trgt: trgt})
   }
 
-  msgActorDamage(src, trgt) {
-    this._msgStack.push({id: 'actor_damage', src: src, trgt: trgt})
+  msgActionDestroy(entity, action) {
+    this._msgStack.push({id: 'action_destroy', entity: entity, action: action})
   }
 
   /**
@@ -64,6 +60,14 @@ class MessageStack {
    */
   msgActorMove(entity, dx, dy) {
     this._msgStack.push({id: 'actor_move', entity: entity, dx: dx, dy:dy})
+  }
+
+  /**
+   * Process the AI for an entity
+   * @param {Object} entity
+   */
+  msgAIProcess(entity) {
+    this._msgStack.push({id: 'ai_process', entity: entity})
   }
 
   /**

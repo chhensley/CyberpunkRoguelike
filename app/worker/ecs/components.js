@@ -24,10 +24,10 @@ var Actor = function(fov, state, statemachine) {
  * @param {number} hp - Total hit points
  * @param {function} onDestroy - Callback run when actor destroyed
  */
-var Destructable = function(hp, onDestroy) {
+var Destructable = function(hp, actions) {
   this.hp = hp
   this.dmg = 0
-  this.onDestroy = onDestroy
+  this.actions = actions
 }
 
 /**

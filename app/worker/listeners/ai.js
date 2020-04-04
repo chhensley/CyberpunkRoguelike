@@ -76,24 +76,6 @@ function stateWait(entity) {
 
 entityManager.factory.fsmManager.registerStates(stateAttack, stateWait)
 
-
-//Register event listeners
-function onPersonDestroy(entity) {
-  delete entity.actor
-  delete entity.hiddenTile
-  entity.tile = entityManager.factory.tiles.get('splat')
-  msgManager.msgStack.msgLogMessage(setUpper(entity.id + ' dies'))
-  entity.id = 'corpse'
-  delete entity.destructable
-}
-
-function onPlayerDestroy(entity) {
-  msgManager.msgStack.msgAppGameOver()
-  msgManager.msgStack.msgLogMessage('Player died')
-}
-
-entityManager.factory.addListeners(onPlayerDestroy, onPersonDestroy)
-
 msgManager.registerCallback('ai_process', function(msg, msgStack, entityManager){
   var actor = msg.entity.actor
   actor.statemachine[actor.state](msg.entity)

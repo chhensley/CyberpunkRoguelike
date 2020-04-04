@@ -8,6 +8,7 @@
     "worker/listeners/factory.js",
     "worker/listeners/actor.js",
     "worker/listeners/ai.js",
+    "worker/listeners/damage.js",
     "worker/listeners/ui.js"
   ]
 }
