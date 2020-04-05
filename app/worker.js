@@ -14,8 +14,7 @@ importScripts(site + 'shared/rot.min.js',
   site + 'shared/util.js', 
   site + 'worker/common.js', 
   site + 'worker/ecs/entity.js', 
-  site + 'worker/messaging/msgmanager.js', 
-  site + 'worker/pathfinding.js'
+  site + 'worker/messaging/msgmanager.js'
 )
 
 //Process all messages in the game message stack
@@ -78,35 +77,52 @@ processMessages()
 
 //var testEnt = entityManager.createEntity('pills')
 //testEnt.position = new Position(player.position.x + 1, player.position.y)
+//var testEnt2 = entityManager.createEntity('pills')
+//testEnt2.position = new Position(player.position.x + 1, player.position.y)
 
 var uiActions
 
 onmessage = function(e) {
   var msg
 
-  if(e.data.id == 'keypress') {
-    msg = {id: 'key_input', key: e.data.body}
-  }
+  switch(e.data.id) {
+    case 'keypress':
+      msg = {id: 'key_input', key: e.data.body}
+      break;
 
-  if(e.data.id == 'use') {
-    uiActions = []
-    const view = entityManager.getView('position', 'usable')
-    for(const entity of view) {
-      if(entity.position.x != player.position.x || entity.position.y != player.position.y) continue
-      for(const action in entity.usable) {
-        if(!['addAction', 'deleteAction'].includes(action))
-          uiActions.push({
-            entity: entity,
-            action: action
-          })
+    case 'use':
+      uiActions = []
+      let menuItems = []
+      const view = entityManager.getView('position', 'usable')
+      for(const entity of view) {
+        if(entity.position.x != player.position.x || entity.position.y != player.position.y) continue
+        for(const action in entity.usable) {
+          if(!['addAction', 'deleteAction'].includes(action)) {
+            uiActions.push({
+              entity: entity,
+              action: action
+            })
+            menuItems.push({
+              icon: entity.tile.char,
+              action: action,
+              id: entity.id,
+              description: entity.usable[action].description
+            })
+          }
+        }
       }
-    }
 
-    if(uiActions.length == 0) {
-      msg = {id: 'log_message', logMsg: 'You find nothing to use'}
-    } else if(uiActions.length == 1) {
-      msg = {id: 'action_use', action: uiActions[0].action, src: player, trgt: uiActions[0].entity }
-    }
+      if(uiActions.length == 0) {
+        msg = {id: 'log_message', logMsg: 'You find nothing to use'}
+      } else if(uiActions.length == 1) {
+        msg = {id: 'action_use', action: uiActions[0].action, src: player, trgt: uiActions[0].entity }
+      } else {
+        this.postMessage({id: 'menu_use', body: menuItems})
+      }
+      break
+    case 'menu':
+      msg = msg = {id: 'action_use', action: uiActions[e.data.body].action, src: player, trgt: uiActions[e.data.body].entity }
+      break
   }
 
   //Main game loop
