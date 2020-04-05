@@ -101,7 +101,10 @@ onmessage = function(e) {
           })
       }
     }
-    if(uiActions.length == 1) {
+
+    if(uiActions.length == 0) {
+      msg = {id: 'log_message', logMsg: 'You find nothing to use'}
+    } else if(uiActions.length == 1) {
       msg = {id: 'action_use', action: uiActions[0].action, src: player, trgt: uiActions[0].entity }
     }
   }
