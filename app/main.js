@@ -27,7 +27,6 @@ var term = new ROT.Display
 term.setOptions(config.terminal);
 
 //Initialize other UI elments
-console.log(document.getElementById('menu_use'))
 document.getElementById('menu_use').style.width = (config.terminal.width * config.terminal.fontSize) + 'px'
 document.getElementById('menu_use').style.height = (config.terminal.height * config.terminal.fontSize) + 'px'
 
@@ -93,7 +92,7 @@ worker.onmessage = function(e) {
         }, false)
         document.getElementById('menu_use').appendChild(item)
       }
-      status = 'menu_use'
+      state = 'menu_use'
       break
     case 'set_value':
       var element = document.getElementById(e.data.body.property)
@@ -128,7 +127,7 @@ function refreshTerm(map) {
  *    Keyboard input
  */
 function keyInput(key) {
-  switch(status) {
+  switch(state) {
     case 'action':
       state = 'locked'
       if (['w', 's', 'a', 'd'].includes(key) ) worker.postMessage({id: 'keypress', body: key})
@@ -136,15 +135,16 @@ function keyInput(key) {
       else state = 'action'
       break
     case 'menu_use':
-      status = 'locked'
+      state = 'locked'
       let index = menuKeys.indexOf(key)
       if(index > -1 && index < document.getElementById('menu_use').children.length - 1) {
         document.getElementById('menu_use').style.display = 'hidden'
         document.getElementById('term').appendChild(term.getContainer())
         document.getElementById('menu_use').innerHTML = ''
+        document.getElementById('menu_use').style.display = 'none'
         worker.postMessage({id: 'menu', body: index})
       }
-      else status = 'menu_use'
+      else state = 'menu_use'
       break
   }
 }
