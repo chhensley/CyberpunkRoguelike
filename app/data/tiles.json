@@ -15,7 +15,7 @@
     "blockMove": true
   },
   "med": {
-    "char": "\u271A ",
+    "char": "\u271A",
     "color": "term00"
   },
   "player": {

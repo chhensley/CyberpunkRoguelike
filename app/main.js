@@ -16,9 +16,20 @@ var worker = new Worker(site + 'app/worker.js')
 //Retrieve configuration info
 const config = getJson(site + 'app/' + getJson(site + 'app/manifest.json').config)
 
+//Menu key commands
+const menuKeys = [
+  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+  'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'
+]
+
 //Intialize simulated terminal
 var term = new ROT.Display
 term.setOptions(config.terminal);
+
+//Initialize other UI elments
+console.log(document.getElementById('menu_use'))
+document.getElementById('menu_use').style.width = (config.terminal.width * config.terminal.fontSize) + 'px'
+document.getElementById('menu_use').style.height = (config.terminal.height * config.terminal.fontSize) + 'px'
 
 //Initialize input
 var state = 'action'
@@ -51,6 +62,38 @@ worker.onmessage = function(e) {
       msg.innerHTML = e.data.body
       msgLog.removeChild(msgLog.childNodes[0])
       msgLog.appendChild(msg)
+      break
+    case 'menu_use':
+      //Displays menu
+      document.getElementById('term').innerHTML = ''
+      document.getElementById('menu_use').style.display = 'block'
+      let label = document.createElement('div')
+      label.innerHTML = 'Select Action:'
+      document.getElementById('menu_use').appendChild(label)
+      var count = 0
+      for(const action of e.data.body) {
+        const item = document.createElement('button')
+
+        const key = document.createElement('span')
+        key.innerHTML = menuKeys[count++] + ' | '
+        const icon = document.createElement('span')
+        icon.innerHTML = action.icon
+        const text = document.createElement('span')
+        text.innerHTML = ' ' + action.action.toUpperCase() + ' ' + action.id.toUpperCase()
+        const desc = document.createElement('desc')
+        desc.innerHTML = ' | ' + action.description
+
+        item.className = 'menu'
+        item.appendChild(key)
+        item.appendChild(icon)
+        item.appendChild(text)
+        item.appendChild(desc)
+        item.addEventListener('click', function(e){
+          keyInput(this.children[0].innerHTML[0])
+        }, false)
+        document.getElementById('menu_use').appendChild(item)
+      }
+      status = 'menu_use'
       break
     case 'set_value':
       var element = document.getElementById(e.data.body.property)
@@ -85,12 +128,24 @@ function refreshTerm(map) {
  *    Keyboard input
  */
 function keyInput(key) {
-  if(state == 'action') {
-    state = 'locked'
-    if (['w', 's', 'a', 'd'].includes(key) ) 
-      worker.postMessage({id: 'keypress', body: key})
-    if(key == ' ')
-      worker.postMessage({id: 'use'})
+  switch(status) {
+    case 'action':
+      state = 'locked'
+      if (['w', 's', 'a', 'd'].includes(key) ) worker.postMessage({id: 'keypress', body: key})
+      else if(key == ' ') worker.postMessage({id: 'use'})
+      else state = 'action'
+      break
+    case 'menu_use':
+      status = 'locked'
+      let index = menuKeys.indexOf(key)
+      if(index > -1 && index < document.getElementById('menu_use').children.length - 1) {
+        document.getElementById('menu_use').style.display = 'hidden'
+        document.getElementById('term').appendChild(term.getContainer())
+        document.getElementById('menu_use').innerHTML = ''
+        worker.postMessage({id: 'menu', body: index})
+      }
+      else status = 'menu_use'
+      break
   }
 }
 
