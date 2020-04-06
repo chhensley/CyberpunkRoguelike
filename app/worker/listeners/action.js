@@ -15,6 +15,10 @@ msgManager.registerCallback('action_use', function(msg, msgStack, entityManager)
 })
 
 //Individual actions
+msgManager.registerCallback('action_delete', function(msg, msgStack, entityManager){
+  entityManager.deleteEntity(msg.src)
+})
+
 msgManager.registerCallback('action_heal', function(msg, msgStack, entityManager){
   const amt = randInt(msg.min, msg.max)
   if(msg.trgt.destructable) {
@@ -24,7 +28,9 @@ msgManager.registerCallback('action_heal', function(msg, msgStack, entityManager
   msgStack.msgLogMessage(setUpper(msg.trgt.id) + ' heals ' + amt + ' hitpoints')
 })
 
-msgManager.registerCallback('action_delete', function(msg, msgStack, entityManager){
-  entityManager.deleteEntity(msg.src)
+msgManager.registerCallback('action_pickup', function(msg, msgStack, entityManager){
+  msg.src.owned = new Owned(msg.trgt)
+  delete msg.src.position
+  msgStack.msgLogMessage(setUpper(msg.trgt.id) + ' picks up ' + msg.src.id)
 })
 

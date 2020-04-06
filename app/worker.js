@@ -75,12 +75,18 @@ this.postMessage({id: 'set_value', body: {'property': 'seed', 'value': ROT.RNG.g
 msgManager.msgStack.msgAppStart()
 processMessages()
 
-//var testEnt = entityManager.createEntity('pills')
+var testEnt = entityManager.createEntity('pills')
+testEnt.owned = new Owned(player)
 //testEnt.position = new Position(player.position.x + 1, player.position.y)
 //var testEnt2 = entityManager.createEntity('pills')
 //testEnt2.position = new Position(player.position.x + 1, player.position.y)
+/*this.postMessage({id: 'menu_inventory', body: [
+  {id: 'pain killers', icon: '\u271A', description: 'Over-the-counter pain killers'},
+  {id: 'pain killers', icon: '\u271A', description: 'Over-the-counter pain killers'}
+]})*/
 
 var uiActions
+var uiInventory
 
 onmessage = function(e) {
   var msg
@@ -92,12 +98,12 @@ onmessage = function(e) {
 
     case 'use':
       uiActions = []
-      let menuItems = []
-      const view = entityManager.getView('position', 'usable')
+      var menuItems = []
+      var view = entityManager.getView('position', 'usable')
       for(const entity of view) {
         if(entity.position.x != player.position.x || entity.position.y != player.position.y) continue
         for(const action in entity.usable) {
-          if(!['addAction', 'deleteAction'].includes(action)) {
+          if(!['addAction', 'deleteAction'].includes(action) && entity.usable[action].world) {
             uiActions.push({
               entity: entity,
               action: action
@@ -119,6 +125,54 @@ onmessage = function(e) {
       } else {
         this.postMessage({id: 'menu_use', body: menuItems})
       }
+      break
+    case 'inventory':
+      uiInventory = []
+      var menuItems = []
+      var view = entityManager.getView('owned')
+      for(const entity of view) {
+        if(entity.owned.owner != player) continue
+        for(const action in entity.usable) {
+          if(!['addAction', 'deleteAction'].includes(action) && entity.usable[action].world) {
+            uiInventory.push({
+              entity: entity,
+              action: action
+            })
+            menuItems.push({
+              icon: entity.tile.char,
+              id: entity.id,
+              description: entity.description
+            })
+          }
+        }
+      }
+
+      if(uiInventory.length == 0) {
+        msg = {id: 'log_message', logMsg: 'Your inventory is empty'}
+      } else {
+        this.postMessage({id: 'menu_inventory', body: menuItems})
+      }
+      break
+    case 'inventory_item':
+      uiActions = []
+      var menuItems = []
+      var entity = uiInventory[e.data.body].entity
+      console.log(entity)
+      for(action in entity.usable) {
+        if(!['addAction', 'deleteAction'].includes(action) && entity.usable[action].inventory) {
+          uiActions.push({
+            entity: entity,
+            action: action
+          })
+          menuItems.push({
+            icon: entity.tile.char,
+            action: action,
+            id: entity.id,
+            description: entity.usable[action].description
+          })
+        }
+      }
+      this.postMessage({id: 'menu_use', body: menuItems})
       break
     case 'menu':
       msg = msg = {id: 'action_use', action: uiActions[e.data.body].action, src: player, trgt: uiActions[e.data.body].entity }

@@ -85,18 +85,18 @@ class EntityFactory {
           case 'hiddenTile':
             entity.hiddenTile =  this.tiles.get(baseEntity.hiddenTile)
             break
-          case 'id':
-            entity.id = baseEntity.id
-            break
           case 'tile':
             entity.tile = this.tiles.get(baseEntity.tile)
             break
           case 'usable':
             entity.usable = new Usable()
             for(const action in baseEntity.usable) {
-              entity.usable.addAction(action, baseEntity.usable[action].actions, baseEntity.usable[action].description)
+              entity.usable.addAction(action, baseEntity.usable[action].actions, baseEntity.usable[action].description,
+                baseEntity.usable[action].inventory, baseEntity.usable[action].world)
             }
             break
+          default:
+            entity[component] = baseEntity[component]
         }
       }
     }

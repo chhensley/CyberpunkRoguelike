@@ -52,8 +52,7 @@ worker.onmessage = function(e) {
       term.draw(30, 30, 'GAME OVER, MAN!')
       break
     case 'input_unlock':
-      if(state == 'locked')
-        state = 'action'
+      if(state == 'locked') state = 'action'
       break
     case 'log_msg':
       const msgLog = document.getElementById('msglog')
@@ -62,17 +61,47 @@ worker.onmessage = function(e) {
       msgLog.removeChild(msgLog.childNodes[0])
       msgLog.appendChild(msg)
       break
+    case 'menu_inventory':
+        document.getElementById('term').innerHTML = ''
+        document.getElementById('menu_use').style.display = 'block'
+        var label = document.createElement('div')
+        label.innerHTML = 'Select Item:'
+        document.getElementById('menu_use').appendChild(label)
+        var count = 0
+        for(const entity of e.data.body) {
+          const item = document.createElement('button')
+          const key = document.createElement('span')
+          key.innerHTML = menuKeys[count++] + ' | '
+          const icon = document.createElement('span')
+          icon.innerHTML = entity.icon
+          const text = document.createElement('span')
+          text.innerHTML = ' ' + entity.id.toUpperCase()
+          const desc = document.createElement('desc')
+          if(entity.description) {
+            desc.innerHTML = ' | ' + entity.description
+          }
+          item.className = 'menu'
+          item.appendChild(key)
+          item.appendChild(icon)
+          item.appendChild(text)
+          if (entity.description) item.appendChild(desc)
+          item.addEventListener('click', function(e){
+            keyInput(this.children[0].innerHTML[0])
+          }, false)
+          document.getElementById('menu_use').appendChild(item)
+        }
+        state = 'menu_inventory'
+        break
     case 'menu_use':
-      //Displays menu
       document.getElementById('term').innerHTML = ''
       document.getElementById('menu_use').style.display = 'block'
-      let label = document.createElement('div')
+      var label = document.createElement('div')
       label.innerHTML = 'Select Action:'
       document.getElementById('menu_use').appendChild(label)
+
       var count = 0
       for(const action of e.data.body) {
         const item = document.createElement('button')
-
         const key = document.createElement('span')
         key.innerHTML = menuKeys[count++] + ' | '
         const icon = document.createElement('span')
@@ -80,13 +109,14 @@ worker.onmessage = function(e) {
         const text = document.createElement('span')
         text.innerHTML = ' ' + action.action.toUpperCase() + ' ' + action.id.toUpperCase()
         const desc = document.createElement('desc')
-        desc.innerHTML = ' | ' + action.description
-
+        if(action.description) {
+          desc.innerHTML = ' | ' + action.description
+        }
         item.className = 'menu'
         item.appendChild(key)
         item.appendChild(icon)
         item.appendChild(text)
-        item.appendChild(desc)
+        if (action.description) item.appendChild(desc)
         item.addEventListener('click', function(e){
           keyInput(this.children[0].innerHTML[0])
         }, false)
@@ -132,11 +162,12 @@ function keyInput(key) {
       state = 'locked'
       if (['w', 's', 'a', 'd'].includes(key) ) worker.postMessage({id: 'keypress', body: key})
       else if(key == ' ') worker.postMessage({id: 'use'})
+      else if(key == 'i') worker.postMessage({id: 'inventory'})
       else state = 'action'
       break
     case 'menu_use':
       state = 'locked'
-      let index = menuKeys.indexOf(key)
+      var index = menuKeys.indexOf(key)
       if(index > -1 && index < document.getElementById('menu_use').children.length - 1) {
         document.getElementById('menu_use').style.display = 'hidden'
         document.getElementById('term').appendChild(term.getContainer())
@@ -146,6 +177,16 @@ function keyInput(key) {
       }
       else state = 'menu_use'
       break
+    case 'menu_inventory':
+      state = 'locked'
+      var index = menuKeys.indexOf(key)
+      if(index > -1 && index < document.getElementById('menu_use').children.length - 1) {
+        document.getElementById('menu_use').style.display = 'hidden'
+        document.getElementById('term').appendChild(term.getContainer())
+        document.getElementById('menu_use').innerHTML = ''
+        document.getElementById('menu_use').style.display = 'none'
+        worker.postMessage({id: 'inventory_item', body: index})
+      } else state = 'menu_inventory'
   }
 }
 

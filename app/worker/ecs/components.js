@@ -31,6 +31,14 @@ var Destructable = function(hp, actions) {
 }
 
 /**
+ * 
+ * @param {Object} owner - owning entity
+ */
+var Owned = function(owner) {
+  this.owner = owner
+}
+
+/**
  * Indicates entity exists on game map
  * @param {number} x 
  * @param {number} y 
@@ -63,12 +71,16 @@ var Usable = function() {
    * Adds a legal action
    * @param {string} name - name of action (ie: pick up, drop, consume)
    * @param {Object[]} actions - messages pusshed when this action is triggered
-   * @param {string} description - description to be shown in the UI 
+   * @param {string} description - description to be shown in the UI
+   * @param {boolean} inventory - true if this can be used from the inventory
+   * @param {boolean} world - true if this can be use from the world
    */
-  this.addAction = function(name, actions, description) {
+  this.addAction = function(name, actions, description, inventory, world) {
     this[name] = {}
     this[name].actions = actions
     this[name].description = description
+    this[name].inventory = inventory
+    this[name].world = world
   }
 
   /**
